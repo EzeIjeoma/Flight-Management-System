@@ -11,19 +11,19 @@ class Booking
 private:
     string bookingID;
     string userID;
-    string flightID; 
+    string flightNumber; 
     vector<Ticket> tickets;
     string bookingDate;
     string status;
 
 public:
-    Booking(const string& bookingID, const string& userID, const string& flightID, const vector<Ticket>& ticket, const string& bookingDate, const string& status);
+    Booking(const string& bookingID, const string& userID, const string& flightNumber, const vector<Ticket>& ticket, const string& bookingDate, const string& status);
     string getBookingID() const;
     string getUserID() const;
-    string getFlightID() const;
-    vector<Passenger> getPassengers() const;
+    string getFlightNumber() const;
     string getBookingDate() const;
     string getStatus() const;
     void setStatus(const string& status);
+    vector<Ticket> getTickets() const;
 };
 

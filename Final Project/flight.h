@@ -16,18 +16,22 @@ private:
 	string departureTime;
 	string arrivalTime;
 	map<string, SeatInfo> seats;
+	void initializeSeats(int totalRows, int seatsPerRow, int businessRows);
 
 public:
+	Flight(const string& flightNumber, const string& airlineName, const string& origin,
+		const string& destination, const string& departureTime, const string& arrivalTime,
+		int totalRows, int seatsPerRow, int businessRows);
 	string getFlightNumber() const;
 	string getAirlineName() const;
 	string getOrigin() const;
 	string getDestination() const;
 	string getDepartureTime() const;
 	string getArrivalTime() const;
-	double getPrice() const;
-	map<string, bool> getSeats() const;
-
-	void setPrice(double p);
+	string getSeatClass(const string& seatNumber) const;
+	double getSeatPrice(const string& seatNumber) const;
+	bool bookSeat(const string& seatNumber);
+	const map<string, SeatInfo>* getSeats() const;
 
 };
 

@@ -11,7 +11,7 @@
 using namespace std;
 
 void welcome(string message);
-void intro();
+void landingPage();
 void delay(int milliseconds);
 void clearScreen();
 

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <string>
 #include <vector>
 using namespace std;
@@ -9,17 +8,15 @@ using namespace std;
 class Passenger
 {
 private:
-	string passengerID;
 	string name;
-	int age;
 	string passportNumber;
+	string passportIssueCountry;
 
 public:
-	Passenger(const string& passengerID, const string& name, const int& age, const string& passportNumber);
-
-	string get_passengerID();
-	string get_name();
-	int get_age();
-	string get_passportNumber();
+	Passenger();
+	Passenger(const string& name, const string& passportNumber, const string& passportIssueCountry);
+	string get_name() const;
+	string get_passportNumber() const;
+	string get_passportIssueCountry() const;
 };
 

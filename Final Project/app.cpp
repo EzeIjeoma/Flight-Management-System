@@ -12,17 +12,17 @@ void clearScreen() {
     #endif
 }
 
-void intro() {
+void landingPage() {
     int menuChoice;
-    system("color 1F"); // Sets console background to blue and text color to bright white for better readability.
+    system("color 1F");
     cout << setw(0);
     cout << "\n\t ==========================================" << endl;
     cout << "\t||           SKY HIGH AIRLINES            ||" << endl;
     cout << "\t ==========================================" << endl;
     cout << "\n\n\t\tWelcome to the Flight Management System\n\n";
-    cout << "\t1. Book a Flight\n";
-    cout << "\t2. View Available Flights\n";
-    cout << "\t3. Manage Your Booking\n";
+    cout << "\t1. User Login\n";
+    cout << "\t2. Register as a User\n";
+    cout << "\t3. Employee login\n";
     cout << "\t4. Exit\n\n";
     cout << "\tEnter Your Choice: ";
     cin >> menuChoice;
@@ -42,7 +42,7 @@ void intro() {
         cout << "\n\tInvalid Input! Please Try Again.";
         delay(2000);
         system("cls");
-        intro();
+        landingPage();
     }
 }
 
