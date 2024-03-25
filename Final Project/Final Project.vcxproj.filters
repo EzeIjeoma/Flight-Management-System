@@ -77,5 +77,8 @@
     <ClInclude Include="app.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Source Files\data-structures</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

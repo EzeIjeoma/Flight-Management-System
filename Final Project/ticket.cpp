@@ -5,26 +5,26 @@ Ticket::Ticket(const string& ticketID, const Passenger& passenger, const string&
     : ticketID(ticketID), passenger(passenger), flightNumber(flightNumber),
     ticketType(ticketType), seatNumber(seatNumber), price(price) {}
 
-string Ticket::getTicketID() {
+string Ticket::getTicketID() const {
     return ticketID;
 }
 
-Passenger Ticket::getPassenger() {
+Passenger Ticket::getPassenger() const {
     return passenger;
 }
 
-string Ticket::getFlightNumber() {
+string Ticket::getFlightNumber() const {
     return flightNumber;
 }
 
-string Ticket::getTicketType() {
+string Ticket::getTicketType() const {
     return ticketType;
 }
 
-string Ticket::getSeatNumber() {
+string Ticket::getSeatNumber() const {
     return seatNumber;
 }
 
-double Ticket::getPrice() {
+double Ticket::getPrice() const {
     return price;
 }

@@ -148,6 +148,7 @@
     <ClInclude Include="seatInfo.h" />
     <ClInclude Include="ticket.h" />
     <ClInclude Include="user.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

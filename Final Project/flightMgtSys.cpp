@@ -18,8 +18,9 @@ Flight* findFlightByID(const string& flightNumber) {
 
 void addFlight(const string& flightNumber, const string& airlineName, const string& origin,
     const string& destination, const string& departureTime, const string& arrivalTime,
-    int totalRows, int seatsPerRow, int businessRows) {
-    Flight newFlight(flightNumber, airlineName, origin, destination, departureTime, arrivalTime, totalRows, seatsPerRow, businessRows);
+    int totalRows, int seatsPerRow, int businessRows, double businessPrice, double regularPrice) {
+    Flight newFlight(flightNumber, airlineName, origin, destination, departureTime, arrivalTime,
+        totalRows, seatsPerRow, businessRows, businessPrice, regularPrice);
     flights.push_back(newFlight);
 }
 
