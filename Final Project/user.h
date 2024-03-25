@@ -19,11 +19,11 @@ private:
 
 public:
 	User(const string& userId, const string& first_name, const string& last_name, const string& email, const string& password, const string& user_type);
-	string get_first_name();
-	string get_last_name();
-	string get_password();
-	string get_email();
-	string get_user_type();
+	string get_first_name() const;
+	string get_last_name() const;
+	string get_password() const;
+	string get_email() const;
+	string get_user_type() const;
 	void set_password(string password);
 	void set_email(string email);
 };

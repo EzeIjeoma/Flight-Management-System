@@ -1,11 +1,11 @@
 #include "Flight.h"
 #include <sstream>
 
-Flight::Flight(const string& flightNumber, const string& airlineName, const string& origin,
+Flight::Flight(const string& flightNumber, const string& airlineName, const string& dateOfFlight, const string& origin,
     const string& destination, const string& departureTime, const string& arrivalTime,
-    int totalRows, int seatsPerRow, int businessRows, double businessPrice, double regularPrice)
-    : flightNumber(flightNumber), airlineName(airlineName), origin(origin), destination(destination),
-    departureTime(departureTime), arrivalTime(arrivalTime), businessPrice(businessPrice), regularPrice(regularPrice),
+    int totalRows, int seatsPerRow, int businessRows, double businessPrice, double regularPrice, double flightDuration)
+    : flightNumber(flightNumber), airlineName(airlineName), dateOfFlight(dateOfFlight), origin(origin), destination(destination),
+    departureTime(departureTime), arrivalTime(arrivalTime), businessPrice(businessPrice), regularPrice(regularPrice), flightDuration(flightDuration),
     manifest(totalRows* seatsPerRow, 6, "") 
 {
     initializeSeats(totalRows, seatsPerRow, businessRows, businessPrice, regularPrice);
@@ -30,6 +30,10 @@ string Flight::getFlightNumber() const {
 
 string Flight::getAirlineName() const {
     return airlineName;
+}
+
+string Flight::getDateOfFlight() const {
+	return dateOfFlight;
 }
 
 string Flight::getOrigin() const {
@@ -73,6 +77,18 @@ double Flight::getSeatPrice(const string& seatNumber) const {
 		return it->second.price;
 	}
 	return 0.0;
+}
+
+double Flight::getFlightDuration() const {
+	return flightDuration;
+}
+
+double Flight::getBusinessPrice() const {
+	return businessPrice;
+}
+
+double Flight::getRegularPrice() const {
+	return regularPrice;
 }
 
 const map<string, SeatInfo>* Flight::getSeats() const {

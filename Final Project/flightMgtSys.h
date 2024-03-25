@@ -18,10 +18,13 @@ using namespace std;
 // Flight Management
 Flight* findFlightByID(const string& flightNumber);
 bool bookFlight(const string& userID, const string& flightNumber, const string& ticketType, const string& bookingDate, const map<string, Passenger>& seatToPassengerMap);
-void addFlight(const string& flightNumber, const string& airlineName, const string& origin,
+void addFlight(const string& flightNumber, const string& airlineName, const string& dateOfFlight, const string& origin,
     const string& destination, const string& departureTime, const string& arrivalTime,
-    int totalRows, int seatsPerRow, int businessRows);
+    int totalRows, int seatsPerRow, int businessRows, double businessPrice, double regularPrice, double flightDuration);
 void displayFlightDetails(const string& flightNumber);
+vector<Flight> sortFlightsByCriteria(const string& criterion, bool ascending = true);
+vector<Flight> searchFlightsByOriginAndDestination(const string& origin, const string& destination);
+vector<Flight> searchFlightsByDate(const string& date);
 
 
 // User management
