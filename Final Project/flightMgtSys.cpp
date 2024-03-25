@@ -1,7 +1,7 @@
 #include "flightMgtSys.h"
 
 // Global variables
-vector<User> users;
+util::BinarySearchTree<User*, std::string> users;
 User* currentSessionUser = nullptr;
 vector<Flight> flights;
 vector<Booking> bookings;
@@ -132,31 +132,29 @@ bool bookFlight(const string& userID, const string& flightNumber, const string& 
 
 // Authentication and session management
 bool createAdmin(const string& userId, const string& firstName, const string& lastName, const string& email, const string& password, const string& adminRole) {
-    User* user = findUserByEmail(email);
-    if (user != nullptr) {
+    if (findUserByEmail(email) != nullptr) {
         return false;
     }
-    users.push_back(FlightAdmin(userId, firstName, lastName, email, password, adminRole));
+    users.addItem(new FlightAdmin(userId, firstName, lastName, email, password, adminRole), email);
     return true;
 }
 
-
 bool registerUser(const string& userId, const string& firstName, const string& lastName, const string& email, const string& password, const string& userType) {
-    User* user = findUserByEmail(email);
-    if (user != nullptr) {
+    if (findUserByEmail(email) != nullptr) {
         return false;
     }
-    users.push_back(User{ userId, firstName, lastName, email, password, userType });
+    users.addItem(new User(userId, firstName, lastName, email, password, userType), email);
     return true;
 }
 
 User* findUserByEmail(const string& email) {
-    for (User& user : users) {
-        if (user.get_email() == email) {
-            return &user;
-        }
+    try {
+        User* user = users.searchByKey(email);
+        return user;
     }
-    return nullptr;
+    catch (std::runtime_error& e) {
+        return nullptr;
+    }
 }
 
 bool loginUser(const string& email, const string& password) {

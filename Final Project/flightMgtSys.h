@@ -32,7 +32,7 @@ bool registerUser(const string& userId, const string& firstName, const string& l
 bool loginUser(const string& email, const string& password);
 void logoutUser();
 User* getCurrentSessionUser();
-
+bool createAdmin(const string& userId, const string& firstName, const string& lastName, const string& email, const string& password, const string& adminRole);
 
 // Helper functions
 User* findUserByEmail(const string& email);

@@ -72,7 +72,7 @@ void welcome(string message) {
     }
 
     clearScreen();
-    cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n" << right << setw((totalWidth / 2) + (message.length() / 2)) << message;
+    cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t" << right << setw((totalWidth / 2) + (message.length() / 2)) << message;
     delay(3500); 
     clearScreen();
 }
