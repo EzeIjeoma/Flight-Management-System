@@ -22,9 +22,12 @@ void addFlight(const string& flightNumber, const string& airlineName, const stri
     const string& destination, const string& departureTime, const string& arrivalTime,
     int totalRows, int seatsPerRow, int businessRows, double businessPrice, double regularPrice, double flightDuration);
 void displayFlightDetails(const string& flightNumber);
+Booking* getRecentBooking();
+const vector<Booking>& getBookings();
 vector<Flight> sortFlightsByCriteria(const string& criterion, bool ascending = true);
 vector<Flight> searchFlightsByOriginAndDestination(const string& origin, const string& destination);
 vector<Flight> searchFlightsByDate(const string& date);
+
 
 
 // User management

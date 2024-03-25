@@ -2,6 +2,7 @@
 
 // Global variables
 util::BinarySearchTree<User*, std::string> users;
+util::Queue<Booking*> bookingsQueue;
 User* currentSessionUser = nullptr;
 vector<Flight> flights;
 vector<Booking> bookings;
@@ -123,10 +124,26 @@ bool bookFlight(const string& userID, const string& flightNumber, const string& 
     ss << put_time(&now_tm, "%M%S");
     string bookingID = flightNumber.substr(0, 3) + ss.str();
 
-    Booking booking(bookingID, userID, flightNumber, tickets, bookingDate, "Pending Confirmation");
-    bookings.push_back(booking);
+    bookings.emplace_back(bookingID, userID, flightNumber, tickets, bookingDate, "Pending Confirmation");
+    Booking& addedBooking = bookings.back();
+    bookingsQueue.enqueue(&addedBooking);
 
     return true;
+}
+
+Booking* getRecentBooking() {
+    if (bookingsQueue.empty()) {
+        cout << "Booking stack is empty." << std::endl;
+        return nullptr;
+    }
+
+    Booking* topBooking = bookingsQueue.front();
+    bookingsQueue.dequeue();
+    return topBooking;
+}
+
+const vector<Booking>& getBookings() {
+    return bookings;
 }
 
 

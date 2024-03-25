@@ -3,7 +3,6 @@
 #include "Flight.h"
 #include <iostream>
 #include "util.h"
-#include <cassert>
 
 using namespace std;
 
