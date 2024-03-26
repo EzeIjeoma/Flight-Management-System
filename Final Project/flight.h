@@ -15,7 +15,7 @@ class Flight
 private:
 	string flightNumber;
 	string airlineName;
-	string dateOfFlight; //yyyy-mm-dd
+	string dateOfFlight;
 	string origin;
 	string destination;
 	string departureTime;
@@ -43,6 +43,7 @@ public:
 	double getFlightDuration() const;
 	double getBusinessPrice() const;
 	double getRegularPrice() const;
+	vector<string> getAvailableSeats(string criteria = "all") const;
 	bool bookSeat(const string& seatNumber);
 	const map<string, SeatInfo>* getSeats() const;
 	const util::TwoDArrayADT<string>& getManifest() const;

@@ -18,7 +18,7 @@ void Flight::initializeSeats(int totalRows, int seatsPerRow, int businessRows, d
         for (int seat = 0; seat < seatsPerRow; ++seat) {
             stringstream ss;
             ss << row << seatLetters[seat];
-            double price = (seatClass == "Business") ? businessPrice : regularPrice; // Use passed prices
+            double price = (seatClass == "Business") ? businessPrice : regularPrice;
             seats[ss.str()] = SeatInfo(false, seatClass, price);
         }
     }
@@ -91,6 +91,32 @@ double Flight::getRegularPrice() const {
 	return regularPrice;
 }
 
+vector<string> Flight::getAvailableSeats(string criteria) const {
+	vector<string> availableSeats;
+    if (criteria == "all") {
+        for (const auto& seat : seats) {
+            if (!seat.second.isBooked) {
+				availableSeats.push_back(seat.first);
+			}
+		}
+	}
+    else if (criteria == "Business") {
+        for (const auto& seat : seats) {
+            if (!seat.second.isBooked && seat.second.seatClass == "Business") {
+                availableSeats.push_back(seat.first);
+            }
+        }
+    }
+    else if (criteria == "Economy") {
+        for (const auto& seat : seats) {
+            if (!seat.second.isBooked && seat.second.seatClass == "Economy") {
+				availableSeats.push_back(seat.first);
+			}
+		}
+	}
+	return availableSeats;
+}
+
 const map<string, SeatInfo>* Flight::getSeats() const {
     return &seats;
 }
@@ -106,7 +132,7 @@ void Flight::updateManifest(const std::string& targetFlightNumber, const std::ve
 
     manifest.EmptyList();
     for (const auto& booking : bookings) {
-        if (booking.getFlightNumber() == targetFlightNumber) {
+        if (booking.getFlightNumber() == targetFlightNumber && booking.getStatus() == "Confirmed") {
             std::vector<Ticket> tickets = booking.getTickets();
 
             for (const auto& ticket : tickets) {
@@ -124,4 +150,6 @@ void Flight::updateManifest(const std::string& targetFlightNumber, const std::ve
         }
     }
 }
+
+
 

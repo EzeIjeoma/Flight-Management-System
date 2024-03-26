@@ -3,6 +3,10 @@
 User::User(const string& userId, const string& first_name, const string& last_name, const string& email, const string& password, const string& user_type)
     : userId(userId), first_name(first_name), last_name(last_name), email(email), password(password), user_type(user_type) {}
 
+string User::get_userId() const {
+	return userId;
+}
+
 string User::get_first_name() const {
     return first_name;
 }

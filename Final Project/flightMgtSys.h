@@ -24,9 +24,10 @@ void addFlight(const string& flightNumber, const string& airlineName, const stri
 void displayFlightDetails(const string& flightNumber);
 Booking* getRecentBooking();
 const vector<Booking>& getBookings();
-vector<Flight> sortFlightsByCriteria(const string& criterion, bool ascending = true);
-vector<Flight> searchFlightsByOriginAndDestination(const string& origin, const string& destination);
-vector<Flight> searchFlightsByDate(const string& date);
+void sortFlightsByCriteria(vector<Flight>& flightList, const string& criterion, bool ascending = true);
+vector<Flight> searchFlightsByOriginAndDestination(const vector<Flight>& flightList, const string& origin, const string& destination);
+vector<Flight> searchFlightsByDate(const vector<Flight>& flightList, const string& date);
+vector<Flight> getFlights();
 
 
 
@@ -36,6 +37,8 @@ bool loginUser(const string& email, const string& password);
 void logoutUser();
 User* getCurrentSessionUser();
 bool createAdmin(const string& userId, const string& firstName, const string& lastName, const string& email, const string& password, const string& adminRole);
+string getUserId();
 
 // Helper functions
 User* findUserByEmail(const string& email);
+string currentDate();

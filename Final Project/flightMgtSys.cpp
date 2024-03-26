@@ -18,6 +18,10 @@ Flight* findFlightByID(const string& flightNumber) {
     return nullptr;
 }
 
+vector<Flight> getFlights() {
+	return flights;
+}
+
 void addFlight(const string& flightNumber, const string& airlineName, const string& dateOfFlight, const string& origin,
     const string& destination, const string& departureTime, const string& arrivalTime,
     int totalRows, int seatsPerRow, int businessRows,
@@ -46,49 +50,45 @@ void displayFlightDetails(const string& flightNumber) {
 	}
 }
 
-vector<Flight> sortFlightsByCriteria(const string& criterion, bool ascending) {
-    vector<Flight> sortedFlights = flights;
-
+void sortFlightsByCriteria(vector<Flight>& flightList, const string& criterion, bool ascending) {
     if (criterion == "businessPrice") {
-        util::insertionSort(sortedFlights, &Flight::getBusinessPrice, ascending);
+        util::insertionSort(flightList, &Flight::getBusinessPrice, ascending);
     }
     else if (criterion == "regularPrice") {
-        util::insertionSort(sortedFlights, &Flight::getRegularPrice, ascending);
+        util::insertionSort(flightList, &Flight::getRegularPrice, ascending);
     }
     else if (criterion == "flightDuration") {
-        util::insertionSort(sortedFlights, &Flight::getFlightDuration, ascending);
+        util::insertionSort(flightList, &Flight::getFlightDuration, ascending);
     }
     else if (criterion == "airlineName") {
-		util::insertionSort(sortedFlights, &Flight::getAirlineName, ascending);
-	}
-    else if (criterion == "dateOfFlight") {
-		util::insertionSort(sortedFlights, &Flight::getDateOfFlight, ascending);
-	}
-    else {
-        cerr << "Invalid sorting criterion: " << criterion << std::endl;
+        util::insertionSort(flightList, &Flight::getAirlineName, ascending);
     }
-
-    return sortedFlights;
+    else if (criterion == "dateOfFlight") {
+        util::insertionSort(flightList, &Flight::getDateOfFlight, ascending);
+    }
+    else {
+        cerr << "Invalid sorting criterion: " << criterion << endl;
+    }
 }
 
-vector<Flight> searchFlightsByOriginAndDestination(const string& origin, const string& destination) {
-	vector<Flight> matchingFlights;
-    for (Flight& flight : flights) {
+vector<Flight> searchFlightsByOriginAndDestination(const vector<Flight>& flightList, const string& origin, const string& destination) {
+    vector<Flight> matchingFlights;
+    for (const Flight& flight : flightList) {
         if (flight.getOrigin() == origin && flight.getDestination() == destination) {
-			matchingFlights.push_back(flight);
-		}
-	}
-	return matchingFlights;
+            matchingFlights.push_back(flight);
+        }
+    }
+    return matchingFlights;
 }
 
-vector<Flight> searchFlightsByDate(const string& date) {
-	vector<Flight> matchingFlights;
-    for (Flight& flight : flights) {
+vector<Flight> searchFlightsByDate(const vector<Flight>& flightList, const string& date) {
+    vector<Flight> matchingFlights;
+    for (const Flight& flight : flightList) {
         if (flight.getDateOfFlight() == date) {
-			matchingFlights.push_back(flight);
-		}
-	}
-	return matchingFlights;
+            matchingFlights.push_back(flight);
+        }
+    }
+    return matchingFlights;
 }
 
 bool bookFlight(const string& userID, const string& flightNumber, const string& ticketType, const string& bookingDate, const map<string, Passenger>& seatToPassengerMap) {
@@ -189,4 +189,22 @@ void logoutUser() {
 
 User* getCurrentSessionUser() {
     return currentSessionUser;
+}
+
+std::string getUserId() {
+    userId += 1;
+    stringstream ss;
+    ss << setw(3) << setfill('0') << userId;
+    return ss.str();
+}
+
+// Helper functions
+string currentDate() {
+	auto now = chrono::system_clock::now();
+	auto now_c = chrono::system_clock::to_time_t(now);
+	tm now_tm = {};
+	localtime_s(&now_tm, &now_c);
+	stringstream ss;
+	ss << put_time(&now_tm, "%Y-%m-%d");
+	return ss.str();
 }

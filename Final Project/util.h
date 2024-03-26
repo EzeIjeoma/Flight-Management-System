@@ -267,9 +267,12 @@ namespace util {
         }
         void printTable() const {
             for (const auto& row : rows) {
+                cout << "\t";
                 printSeparatorLine();
+                cout<< "\t";
                 printRow(row);
             }
+            cout << "\t";
             printSeparatorLine();
         }
     private:
