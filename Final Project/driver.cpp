@@ -11,6 +11,7 @@ void loadData();
 int main() {
 	loadData();
     //welcome("SKY HIGH FLIGHT BOOKING SERVICES");
+	//app::viewFlightManifest();
     app::landingPage();
 	//app::bookFlight();
 }
@@ -146,4 +147,19 @@ void loadData() {
 	map<string, Passenger> seatToPassengerMap2;
 	seatToPassengerMap2["6B"] = passenger2;
 	bookFlight("100", "DL456", "Economy", "2024-11-30", seatToPassengerMap2);
+
+	Passenger passenger6("Adeola Okeke", "P123456", "USA");
+	Passenger passenger8("Chinedu Ifeanyi", "P123456", "USA");
+	Passenger passenger10("Oluchi Amadi", "P123456", "USA");
+	Passenger passenger5("Oliver Smith", "P123456", "USA");
+	Passenger passenger7("Harry Johnson", "P123456", "USA");
+	Passenger passenger9("Ella Brown", "P123456", "USA");
+	map<string, Passenger> seatToPassengerMap4;
+	seatToPassengerMap4["5A"] = passenger5;
+	seatToPassengerMap4["5B"] = passenger6;
+	seatToPassengerMap4["5C"] = passenger7;
+	seatToPassengerMap4["6A"] = passenger8;
+	seatToPassengerMap4["6B"] = passenger9;
+	seatToPassengerMap4["6C"] = passenger10;
+	bookFlight("182", "AF007", "Business", "2024-11-19", seatToPassengerMap4);
 }

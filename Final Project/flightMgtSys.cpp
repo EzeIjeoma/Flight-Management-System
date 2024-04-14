@@ -2,7 +2,7 @@
 
 // Global variables
 util::BinarySearchTree<User*, std::string> users;
-util::Queue<Booking*> bookingsQueue;
+util::Queue<Booking*> cancelledBookingsQueue;
 User* currentSessionUser = nullptr;
 vector<Flight> flights;
 vector<Booking> bookings;
@@ -127,21 +127,47 @@ bool bookFlight(const string& userID, const string& flightNumber, const string& 
     ss << put_time(&now_tm, "%M%S");
     string bookingID = flightNumber.substr(0, 3) + ss.str();
 
-    bookings.emplace_back(bookingID, userID, flightNumber, tickets, bookingDate, "Pending Confirmation");
-    Booking& addedBooking = bookings.back();
-    bookingsQueue.enqueue(&addedBooking);
+    bookings.emplace_back(bookingID, userID, flightNumber, tickets, bookingDate, "Scheduled");
 
     return true;
 }
 
+bool adminCancelBooking(const string bookingID) {
+	Booking* booking = findBookingByID(bookingID);
+    if (!booking) {
+		return false;
+	}
+
+    for (const Ticket& ticket : booking->getTickets()) {
+		Flight* flight = findFlightByID(booking->getFlightNumber());
+        if (flight) {
+			flight->cancelSeat(ticket.getSeatNumber());
+		}
+	}
+
+	booking->setStatus("Cancelled");
+    return true;
+}
+
+bool requestBookingCancellation(const string bookingID) {
+	Booking* booking = findBookingByID(bookingID);
+    if (!booking) {
+		return false;
+	}
+
+	booking->setStatus("Pending Cancellation");
+	cancelledBookingsQueue.enqueue(booking);
+    return true;
+}
+
 Booking* getRecentBooking() {
-    if (bookingsQueue.empty()) {
+    if (cancelledBookingsQueue.empty()) {
         cout << "Booking stack is empty." << std::endl;
         return nullptr;
     }
 
-    Booking* topBooking = bookingsQueue.front();
-    bookingsQueue.dequeue();
+    Booking* topBooking = cancelledBookingsQueue.front();
+    cancelledBookingsQueue.dequeue();
     return topBooking;
 }
 
@@ -233,6 +259,14 @@ vector<Flight> searchFlightsByDate(const vector<Flight>& flightList, const strin
     return matchingFlights;
 }
 
+util::TwoDArrayADT<string> getFlightManifest(const string& flightNumber) {
+	Flight* flight = findFlightByID(flightNumber);
+    if (!flight) {
+        return util::TwoDArrayADT<string>(0,0,"");
+	}
+	return flight->getManifest(flightNumber, bookings);
+}
+
 
 // Authentication and session management
 bool createAdmin(const string& userId, const string& firstName, const string& lastName, const string& email, const string& password, const string& adminRole) {
@@ -304,4 +338,53 @@ string getCurrentDate() {
 	stringstream ss;
 	ss << put_time(&now_tm, "%Y-%m-%d");
 	return ss.str();
+}
+
+string toUpper(string str) {
+    transform(str.begin(), str.end(), str.begin(), ::toupper);
+    return str;
+}
+
+bool writeCSVToFile(const string& fileName, string& csvData, string& filePath) {
+    char* userProfilePath = nullptr;
+    size_t size = 0;
+    errno_t err = _dupenv_s(&userProfilePath, &size, "USERPROFILE");
+
+    if (err || userProfilePath == nullptr) {
+        cerr << "Error: Unable to find user profile directory." << endl;
+        return false;
+    }
+    filePath = string(userProfilePath) + "\\Downloads\\" + fileName;
+    ofstream outFile(filePath);
+    if (!outFile.is_open()) {
+        cerr << "Failed to open file at " << fileName << endl;
+        return false;
+    }
+    outFile << csvData;
+    outFile.close();
+    return true; 
+}
+
+string formatCSVContent(const string& content) {
+    string formatted = "\"";
+    for (char c : content) {
+        if (c == '\"') {
+            formatted += "\"\"";
+        }
+        else {
+            formatted += c;
+        }
+    }
+    formatted += "\""; // End with a quote
+    return formatted;
+}
+
+bool openExcel(const string& filePath) {
+    string command = "start excel \"" + filePath + "\"";
+    if (system(command.c_str()) != 0) {
+        cerr << "Failed to open Excel." << endl;
+        return false;
+    }
+
+    return true;
 }

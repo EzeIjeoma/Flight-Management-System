@@ -6,7 +6,7 @@ Flight::Flight(const string& flightNumber, const string& airlineName, const stri
     int totalRows, int seatsPerRow, int businessRows, double businessPrice, double regularPrice, double flightDuration)
     : flightNumber(flightNumber), airlineName(airlineName), dateOfFlight(dateOfFlight), origin(origin), destination(destination),
     departureTime(departureTime), arrivalTime(arrivalTime), businessPrice(businessPrice), regularPrice(regularPrice), flightDuration(flightDuration),
-    manifest(totalRows* seatsPerRow, 6, "") 
+    manifest((totalRows* seatsPerRow), 6, "")
 {
     initializeSeats(totalRows, seatsPerRow, businessRows, businessPrice, regularPrice);
 }
@@ -121,7 +121,8 @@ const map<string, SeatInfo>* Flight::getSeats() const {
     return &seats;
 }
 
-const util::TwoDArrayADT<string>& Flight::getManifest() const {
+util::TwoDArrayADT<string> Flight::getManifest(const string flightNumber, const std::vector<Booking>& bookings) {
+    updateManifest(flightNumber, bookings);
     return manifest;
 }
 
@@ -132,9 +133,8 @@ void Flight::updateManifest(const std::string& targetFlightNumber, const std::ve
 
     manifest.EmptyList();
     for (const auto& booking : bookings) {
-        if (booking.getFlightNumber() == targetFlightNumber && booking.getStatus() == "Confirmed") {
+        if (booking.getFlightNumber() == targetFlightNumber && booking.getStatus() == "Scheduled") {
             std::vector<Ticket> tickets = booking.getTickets();
-
             for (const auto& ticket : tickets) {
                 Passenger passenger = ticket.getPassenger();
                 std::vector<std::string> ticketDetails = {
@@ -149,6 +149,13 @@ void Flight::updateManifest(const std::string& targetFlightNumber, const std::ve
             }
         }
     }
+}
+
+void Flight::cancelSeat(const string& seatNumber) {
+	auto it = seats.find(seatNumber);
+    if (it != seats.end()) {
+		it->second.isBooked = false;
+	}
 }
 
 

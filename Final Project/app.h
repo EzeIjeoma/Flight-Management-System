@@ -31,5 +31,6 @@ namespace app {
     void bookFlight();
     void viewBookingsTripDetails();
     void tripDetails(string bookingID);
+    void viewFlightManifest();
 }
 

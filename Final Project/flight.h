@@ -20,6 +20,7 @@ private:
 	string destination;
 	string departureTime;
 	string arrivalTime;
+	string flightStatus;
 	double flightDuration;
 	double businessPrice;
 	double regularPrice;
@@ -46,7 +47,8 @@ public:
 	vector<string> getAvailableSeats(string criteria = "all") const;
 	bool bookSeat(const string& seatNumber);
 	const map<string, SeatInfo>* getSeats() const;
-	const util::TwoDArrayADT<string>& getManifest() const;
+	util::TwoDArrayADT<string> getManifest(string flightNumber, const std::vector<Booking>& bookings);
 	void updateManifest(const std::string& targetFlightNumber, const std::vector<Booking>& bookings);
+	void cancelSeat(const string& seatNumber);
 };
 

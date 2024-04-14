@@ -130,6 +130,119 @@ namespace app {
 		adminMenu();
 	}
 
+	void viewFlightManifest() {
+		string flightNumber;
+
+		auto checkAndExit = [&]() -> bool {
+			if (flightNumber == "exit") {
+				clearScreen();
+				adminMenu();
+				return true;
+			}
+			return false;
+		};
+
+		asciiHeader();
+		cout << "\n\n\tFlight Manifest\n\n";
+		cout << "\tEnter Flight Number: ";
+		cin >> flightNumber;
+		if (checkAndExit()) return;
+		flightNumber = toUpper(flightNumber);
+
+		Flight* flight = findFlightByID(flightNumber);
+		if (!flight) {
+			cout << "\n\tFlight not found! Please Try Again.";
+			delay(2000);
+			clearScreen();
+			adminMenu();
+			return;
+		}
+
+		util::TwoDArrayADT<string> manifest = flight->getManifest(flightNumber, getBookings());
+		if (manifest.getLength() == 0) {
+			cout << "\n\tNo Bookings Found for this Flight!";
+			delay(3000);
+			clearScreen();
+			adminMenu();
+			return;
+		}
+
+		// Display the manifest
+		clearScreen();
+		asciiHeader();
+		string csvData;
+		//cout << "\n\n\tFlight Manifest\n\n";
+		cout << "\tFlight Number: " << flightNumber << endl;
+		cout << "\tAirline: " << flight->getAirlineName() << endl;
+		cout << "\tDate: " << flight->getDateOfFlight() << endl;
+		cout << "\tOrigin: " << flight->getOrigin() << endl;
+		cout << "\tDestination: " << flight->getDestination() << endl;
+		cout << "\tDeparture Time: " << flight->getDepartureTime() << endl;
+		cout << "\tArrival Time: " << flight->getArrivalTime() << endl;
+		cout << "\tFlight Duration: " << flight->getFlightDuration() << " hours" << endl;
+		cout << "\tNumber of Passengers: " << manifest.getLength() << endl << endl;
+
+		csvData += "Flight Number:," + flightNumber + "\n";
+		csvData += "Airline:," + flight->getAirlineName() + "\n";
+		csvData += "Date:," + flight->getDateOfFlight() + "\n";
+		csvData += "Origin:," + flight->getOrigin() + "\n";
+		csvData += "Destination:," + flight->getDestination() + "\n";
+		csvData += "Departure Time:," + flight->getDepartureTime() + "\n";
+		csvData += "Arrival Time:," + flight->getArrivalTime() + "\n";
+		csvData += "Flight Duration:," + to_string(flight->getFlightDuration()) + " hours\n";
+		csvData += "Number of Passengers:," + to_string(manifest.getLength()) + "\n\n";
+		csvData += "Seat Number,Passenger Name,Passport Number,Passport Issue Country,Ticket Type\n";
+
+		util::ConsoleTable table;
+		vector<string> headers = { "Seat Number", "Passenger Name", "Passport Number", "Passport Issue Country", "Ticket Type" };
+		table.addHeaders(headers);
+
+		for (int i = 0; i < manifest.getLength(); i++) {
+			table.addRow({ manifest.getItem(i, 3), manifest.getItem(i, 1), manifest.getItem(i, 0), manifest.getItem(i, 2), manifest.getItem(i, 4) });
+			csvData += manifest.getItem(i, 3) + "," + manifest.getItem(i, 1) + "," + manifest.getItem(i, 0) + "," + manifest.getItem(i, 2) + "," + manifest.getItem(i, 4) + "\n";
+		}
+		table.printTable();
+
+		cout << "\n\n\t1. Download Manifest as CSV\n";
+		cout << "\t2. Go Back to Admin Menu\n";
+		cout << "\tEnter Your Choice: ";
+		string input;
+		cin >> input;
+		if (input == "1") {
+			formatCSVContent(csvData);
+			string fileName = "FlightManifest_" + flightNumber + ".csv";
+			string filePath;
+			if (writeCSVToFile(fileName, csvData, filePath)) {
+				clearScreen();
+				cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\t\tDownloading"; 
+				delay(1500);
+				cout << ".";
+				delay(1000);
+				cout << "."; 
+				delay(1000);				
+				cout << "."; 
+				delay(500);
+				cout << "." << endl;
+				clearScreen();
+				cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\t\tManifest Downloaded Successfully!";
+				delay(2500);
+				openExcel(filePath);
+				clearScreen();
+				adminMenu();
+			}
+			else {
+				cout << "\n\tManifest Download Failed! Please Try Again.";
+				delay(2000);
+				clearScreen();
+				viewFlightManifest();
+			}
+		}
+		else {
+			clearScreen();
+			adminMenu();
+		}
+	}	
+
 	void adminMenu() {
 		int menuChoice;
 		asciiHeader();
@@ -138,7 +251,7 @@ namespace app {
 		cout << "\t2. View Flights\n";
 		cout << "\t3. View Flight Manifest\n";
 		cout << "\t4. View Bookings\n";
-		cout << "\t5. View Pending Bookings\n";
+		cout << "\t5. Process Booking Cancellation\n";
 		cout << "\t6. Logout\n\n";
 		cout << "\tEnter Your Choice: ";
 		cin >> menuChoice;
@@ -154,7 +267,7 @@ namespace app {
 			break;
 		case 3:
 			clearScreen();
-			//viewFlightManifest(); 
+			viewFlightManifest(); 
 			break;
 		case 4:
 			clearScreen();
@@ -358,6 +471,7 @@ namespace app {
 
 
 	void viewBookingsTripDetails() {
+		clearScreen();
 		// Get current session user ID
 		User* currentUser = getCurrentSessionUser();
 		string userId = currentUser->get_userId();
@@ -366,23 +480,23 @@ namespace app {
 		vector<Booking> userBookings = searchBookingsByUser(getBookings(), userId);
 
 		string currentDate = getCurrentDate();
-
-		// Filter user-specific bookings by status
-		vector<Booking> pendingBookings;
-		pendingBookings = searchBookingsByStatus(userBookings, "Pending Confirmation");
-		pendingBookings = searchBookingsByDate(pendingBookings, currentDate, false);
-
 		vector<Booking> confirmedBookings;
-		confirmedBookings = searchBookingsByStatus(userBookings, "Confirmed");
+		confirmedBookings = searchBookingsByStatus(userBookings, "Scheduled");
 		confirmedBookings = searchBookingsByDate(confirmedBookings, currentDate, false);
 
-		vector<Booking> expiredBookings;
-		expiredBookings = searchBookingsByFlightDate(userBookings, currentDate, true);
-		expiredBookings = searchBookingsByStatus(expiredBookings, "Confirmed");
-		
-		vector<Booking> cancelledBookings = searchBookingsByStatus(userBookings, "Cancelled");
+		vector<Booking> pendingCancelBookings;
+		pendingCancelBookings = searchBookingsByStatus(userBookings, "Pending Cancellation");
+		pendingCancelBookings = searchBookingsByDate(pendingCancelBookings, currentDate, false);
 
-		clearScreen();
+		vector<Booking> expiredBookings;
+		expiredBookings = searchBookingsByStatus(userBookings, "Scheduled");
+		expiredBookings = searchBookingsByFlightDate(expiredBookings, currentDate, true);
+		
+		vector<Booking> cancelledBookings;
+		cancelledBookings = searchBookingsByStatus(userBookings, "Cancelled");
+		cancelledBookings = searchBookingsByDate(cancelledBookings, currentDate, true);
+
+
 		asciiHeader();
 		cout << "\n\n\tBooking Details\n\n";
 
@@ -390,34 +504,15 @@ namespace app {
 		vector<string> headers = { "Booking ID", "Booking Date", "Origin", "Destination", "Flight Date", "Status"};
 
 		int countOfTablesWithData = 0;
-		// Add rows to the table for pending bookings
+		// Table for confirmed bookings
 		table.addHeaders(headers);
-		sortBookingsByCriteria(pendingBookings, "bookingDate", false);
-		for (const auto& booking : pendingBookings) {
-			Flight* flight = findFlightByID(booking.getFlightNumber());
-			table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
 
-		}
-		cout << "\n\tPending Bookings\n";
-		if (!pendingBookings.empty()) {
-			countOfTablesWithData++;
-			cout << endl;
-			table.printTable();
-		}
-		else {
-			cout << "\t--------------------------------\n";
-			cout << "\tNo Pending Bookings Found!\n";
-		}
-
-		// Reset the table for confirmed bookings
-		table.clear();
-		table.addHeaders(headers);
 		sortBookingsByCriteria(confirmedBookings, "bookingDate", false);
 		for (const auto& booking : confirmedBookings) {
 			Flight* flight = findFlightByID(booking.getFlightNumber());
 			table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
 		}
-		cout << "\n\tConfirmed Bookings\n";
+		cout << "\n\tScheduled Bookings\n";
 		if (!confirmedBookings.empty()) {
 			countOfTablesWithData++;
 			cout << endl;
@@ -425,7 +520,26 @@ namespace app {
 		}
 		else {
 			cout << "\t--------------------------------\n";
-			cout << "\tNo Confirmed Bookings Found!\n";
+			cout << "\tNo Active Scheduled Bookings Found!\n";
+		}
+
+		// Reset the table for pending cancellation bookings
+		table.clear();
+		table.addHeaders(headers);
+		sortBookingsByCriteria(pendingCancelBookings, "bookingDate", false);
+		for (const auto& booking : pendingCancelBookings) {
+			Flight* flight = findFlightByID(booking.getFlightNumber());
+			table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
+			}
+		cout << "\n\tPending Cancellation Bookings\n";
+		if (!pendingCancelBookings.empty()) {
+			countOfTablesWithData++;
+			cout << endl;
+			table.printTable();
+		}
+		else {
+			cout << "\t--------------------------------\n";
+			cout << "\tNo Pending Cancellation Bookings Found!\n";
 		}
 
 		// Reset the table for expired bookings
@@ -482,7 +596,7 @@ namespace app {
 		}
 
 		clearScreen();
-		userMenu(); // Assuming userMenu() is the appropriate back navigation function
+		userMenu();
 	}
 
 	void tripDetails(string bookingID) {
@@ -521,10 +635,32 @@ namespace app {
 			table.addRow({ ticket.getTicketID(), ticket.getPassenger().get_name(), ticket.getPassenger().get_passportNumber(), ticket.getPassenger().get_passportIssueCountry(), ticket.getSeatNumber(), ticket.getTicketType() });
 		}
 		table.printTable();
-		cout << "\n\n\tPress any key to go back...";
-		_getch();
-		clearScreen();
-		viewBookingsTripDetails();
+
+		cout << "\n\n\t1. Cancel Booking\n";
+		cout << "\t2. Go Back to User Menu\n";
+		cout << "\tEnter Your Choice: ";
+		string input;
+		cin >> input;
+		if (input == "1") {
+			string confirm;
+			cout << "\n\tConfirm Cancellation? (Y/N): ";
+			cin >> confirm;
+			if (confirm == "Y" || confirm == "y") {
+				requestBookingCancellation(bookingID);
+				cout << "\n\tBooking Cancellation Requested";
+				delay(2000);
+				clearScreen();
+				viewBookingsTripDetails();
+			}
+			else {
+				clearScreen();
+				viewBookingsTripDetails();
+			}
+		}
+		else {
+			clearScreen();
+			viewBookingsTripDetails();
+		}
 	}
 
 
