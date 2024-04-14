@@ -89,6 +89,9 @@ void sortBookingsByCriteria(vector<Booking>& bookingList, const string& criterio
     else if (criterion == "status") {
         util::insertionSort(bookingList, &Booking::getStatus, ascending);
     }
+    else if (criterion == "checkInStatus") {
+		util::insertionSort(bookingList, &Booking::getCheckInStatus, ascending);
+	}
     else {
         cerr << "Invalid sorting criterion: " << criterion << endl;
     }
@@ -149,6 +152,17 @@ bool adminCancelBooking(const string bookingID) {
     return true;
 }
 
+bool keepCancellationRequest(const string bookingID) {
+	Booking* booking = findBookingByID(bookingID);
+    if (!booking) {
+		return false;
+	}
+
+	booking->setStatus("Pending Cancellation");
+    cancelledBookingsQueue.enqueue(booking);
+	return true;
+}
+
 bool requestBookingCancellation(const string bookingID) {
 	Booking* booking = findBookingByID(bookingID);
     if (!booking) {
@@ -160,9 +174,8 @@ bool requestBookingCancellation(const string bookingID) {
     return true;
 }
 
-Booking* getRecentBooking() {
+Booking* getCancelledBooking() {
     if (cancelledBookingsQueue.empty()) {
-        cout << "Booking stack is empty." << std::endl;
         return nullptr;
     }
 
@@ -385,6 +398,22 @@ bool openExcel(const string& filePath) {
         cerr << "Failed to open Excel." << endl;
         return false;
     }
-
     return true;
+}
+
+int days_between_dates(const string& date1, const string& date2) {
+    tm tm1 = {};
+    tm tm2 = {};
+    istringstream ss1(date1);
+    istringstream ss2(date2);
+
+    ss1 >> get_time(&tm1, "%Y-%m-%d"); 
+    ss2 >> get_time(&tm2, "%Y-%m-%d"); 
+
+    auto tp1 = system_clock::from_time_t(mktime(&tm1));
+    auto tp2 = system_clock::from_time_t(mktime(&tm2));
+
+    auto duration = tp1 - tp2;
+    auto durationInHours = duration_cast<hours>(duration).count();
+    return (durationInHours / 24);
 }

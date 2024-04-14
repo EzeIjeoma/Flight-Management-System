@@ -36,3 +36,7 @@ void Booking::setStatus(const string& status) {
 bool Booking::getCheckInStatus() const {
 	return checkInStatus;
 }
+
+void Booking::setCheckInStatus(bool status) {
+	this->checkInStatus = status;
+}

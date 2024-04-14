@@ -12,9 +12,12 @@ int main() {
 	loadData();
     //welcome("SKY HIGH FLIGHT BOOKING SERVICES");
 	//app::viewFlightManifest();
-    app::landingPage();
+	loginUser("jd", "1234");
+	app::processCancellation();
+    //app::landingPage();
 	//app::bookFlight();
 }
+
 
 
 //int main() {
@@ -106,7 +109,7 @@ void loadData() {
 	addFlight("UA004", "United Airlines", "2024-12-03", "Chicago", "Miami", "15:00", "19:00", 10, 6, 2, 520.0, 270.0, 4.5);
 	addFlight("SW005", "Southwest Airlines", "2024-12-04", "Miami", "Chicago", "17:00", "21:00", 10, 6, 2, 520.0, 270.0, 4.5);
 	addFlight("BA006", "British Airways", "2024-12-05", "New York", "Los Angeles", "16:00", "20:00", 12, 6, 3, 560.0, 310.0, 5.5);
-	addFlight("AF007", "Air France", "2024-12-06", "Los Angeles", "New York", "18:00", "22:00", 12, 6, 3, 560.0, 310.0, 5.5);
+	addFlight("AF007", "Air France", "2024-04-18", "Los Angeles", "New York", "18:00", "22:00", 12, 6, 3, 560.0, 310.0, 5.5);
 	addFlight("LH008", "Lufthansa", "2024-12-07", "Chicago", "Miami", "20:00", "00:00", 12, 6, 3, 560.0, 310.0, 5.5);
 	addFlight("QR009", "Qatar Airways", "2024-12-08", "Miami", "Chicago", "22:00", "02:00", 12, 6, 3, 560.0, 310.0, 5.5);
 	addFlight("BA123", "British Airways", "2024-12-10", "Lagos", "Houston", "06:00", "16:00", 12, 6, 3, 1100.0, 800.0, 14.0);
@@ -115,7 +118,7 @@ void loadData() {
 	addFlight("QR456", "Qatar Airways", "2024-12-10", "Lagos", "Houston", "13:30", "23:30", 12, 6, 3, 1250.0, 950.0, 14.0);
 	addFlight("EK567", "Emirates", "2024-12-10", "Lagos", "Houston", "16:00", "02:00", 14, 7, 4, 1300.0, 1000.0, 14.0);
 	addFlight("KLM678", "KLM Royal Dutch Airlines", "2024-12-10", "Lagos", "Houston", "18:30", "04:30", 12, 6, 3, 1050.0, 750.0, 14.0);
-	addFlight("LH789", "Lufthansa", "2024-12-10", "Lagos", "Houston", "20:00", "06:00", 10, 6, 2, 1350.0, 1050.0, 14.0);
+	addFlight("LH789", "Lufthansa", "2024-04-17", "Lagos", "Houston", "20:00", "06:00", 10, 6, 2, 1350.0, 1050.0, 14.0);
 	addFlight("AF890", "Air France", "2024-12-10", "Lagos", "Houston", "22:30", "08:30", 14, 7, 4, 1400.0, 1100.0, 14.0);
 	addFlight("AA901", "American Airlines", "2024-12-10", "Lagos", "Houston", "00:00", "10:00", 12, 6, 3, 1450.0, 1150.0, 14.0);
 	addFlight("SW012", "Southwest Airlines", "2024-12-10", "Lagos", "Houston", "02:30", "12:30", 10, 6, 2, 1500.0, 1200.0, 14.0);
@@ -126,13 +129,13 @@ void loadData() {
 	map<string, Passenger> seatToPassengerMap3;
 	seatToPassengerMap3["1A"] = passenger3;
 	seatToPassengerMap3["1B"] = passenger4;
-	bookFlight("100", "AF007", "Business", "2024-11-30", seatToPassengerMap3);
+	bookFlight("100", "AF007", "Business", "2024-04-14", seatToPassengerMap3);
 
 	registerUser("180", "Tim", "Cook", "tim@gmail.com", "1234", "user");
 	Passenger passenger("John Doe", "P123456", "USA");
 	map<string, Passenger> seatToPassengerMap;
 	seatToPassengerMap["7A"] = passenger;
-	bookFlight("100", "LH789", "Economy", "2024-11-30", seatToPassengerMap);
+	bookFlight("100", "LH789", "Economy", "2024-04-14", seatToPassengerMap);
 
 
 	registerUser("181", "Dele", "Amodu", "del@mail.com", "1234", "user");

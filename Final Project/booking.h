@@ -27,5 +27,6 @@ public:
     void setStatus(const string& status);
     vector<Ticket> getTickets() const;
     bool getCheckInStatus() const;
+    void setCheckInStatus(bool status);
 };
 

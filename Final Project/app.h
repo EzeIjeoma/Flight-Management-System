@@ -32,5 +32,7 @@ namespace app {
     void viewBookingsTripDetails();
     void tripDetails(string bookingID);
     void viewFlightManifest();
+    void checkInBoardingPass();
+    void processCancellation();
 }
 

@@ -15,6 +15,11 @@
 #include <fstream>
 #include <cstdlib>
 using namespace std;
+using namespace chrono;
+
+
+// Checkin management
+
 
 // Booking Management
 vector<Booking> searchBookingsByStatus(const std::vector<Booking>& bookings, const std::string& status);
@@ -23,10 +28,11 @@ vector<Booking> searchBookingsByFlightDate(const vector<Booking>& bookings, cons
 vector<Booking> searchBookingsByUser(const std::vector<Booking>& bookings, const std::string& userId);
 void sortBookingsByCriteria(vector<Booking>& bookingList, const string& criterion, bool ascending);
 bool adminCancelBooking(const string bookingID);
+bool keepCancellationRequest(const string bookingID);
 bool requestBookingCancellation(const string bookingID);
 Booking* findBookingByID(const string& bookingID);
 bool bookFlight(const string& userID, const string& flightNumber, const string& ticketType, const string& bookingDate, const map<string, Passenger>& seatToPassengerMap);
-Booking* getRecentBooking();
+Booking* getCancelledBooking();
 vector<Booking>& getBookings();
 
 
@@ -58,3 +64,4 @@ string toUpper(string str);
 bool writeCSVToFile(const string& fileName, string& csvData, string& filepath);
 string formatCSVContent(const string& content);
 bool openExcel(const string& filePath);
+int days_between_dates(const string& date1, const string& date2);

@@ -1,7 +1,7 @@
 #include "app.h"
 #include "flightMgtSys.h"
 
-using namespace std;
+// using namespace std;
 
 namespace app {
 	void viewFlights() {
@@ -241,7 +241,75 @@ namespace app {
 			clearScreen();
 			adminMenu();
 		}
-	}	
+	}
+
+	void processCancellation() {
+		string bookingID;
+		
+		Booking* cancelledBooking = getCancelledBooking();
+		while (cancelledBooking) {
+			asciiHeader();
+			cout << "\n\n\tProcess Booking Cancellation\n\n";
+			vector<Ticket> ticket = cancelledBooking->getTickets();
+			// calculate total refund amount
+			double totalRefund = 0.0;
+			for (const auto& t : ticket) {
+				if (t.getTicketType() == "Business") {
+					totalRefund += 0.8 * findFlightByID(cancelledBooking->getFlightNumber())->getBusinessPrice();
+				}
+				else {
+					totalRefund += 0.8 * findFlightByID(cancelledBooking->getFlightNumber())->getRegularPrice();
+				}
+			}
+
+			cout << "\tBooking ID: " << cancelledBooking->getBookingID();
+			cout << "\n\tFlight Number: " << cancelledBooking->getFlightNumber();
+			cout << "\n\tBooking Date: " << cancelledBooking->getBookingDate();
+			cout << "\n\tStatus: " << cancelledBooking->getStatus();
+			cout << "\n\tTotal Refund Amount: $" << fixed << setprecision(2) << totalRefund << endl;
+			cout << "\n\n\t1. Approve cancellation & intiate refund: \n";
+			cout << "\t2. Leave cancellation and refund on pending: \n";
+			cout << "\t3. Go Back to Admin Menu\n";
+			cout << "\tEnter Your Choice: ";
+			string input;
+			cin >> input;
+
+			if (input == "1") {
+				adminCancelBooking(cancelledBooking->getBookingID());
+				cout << "\n\tBooking Cancelled. Refund Approved!";
+				delay(2000);
+				clearScreen();
+			}
+			else if (input == "2") {
+				keepCancellationRequest(cancelledBooking->getBookingID());
+				cout << "\n\tBooking refund not yet approved!";
+				delay(2000);
+				clearScreen();
+				break;
+			}
+			else {
+				keepCancellationRequest(cancelledBooking->getBookingID());
+				break;
+			}
+
+			cancelledBooking = getCancelledBooking();
+		}
+
+		if (!cancelledBooking) {
+			clearScreen();
+			asciiHeader();
+			cout << "\n\n\tProcess Booking Cancellation\n\n";
+			cout << "\n\tNo Booking Cancellation Requests Found!";
+			delay(2500);
+			clearScreen();
+			adminMenu();
+		}
+		else {
+			clearScreen();
+			adminMenu();
+		}
+
+	}
 
 	void adminMenu() {
 		int menuChoice;
@@ -275,7 +343,7 @@ namespace app {
 			break;
 		case 5:
 			clearScreen();
-			//viewPendingBookings();
+			processCancellation();
 			break;
 		case 6:
 			logout();
@@ -471,7 +539,6 @@ namespace app {
 
 
 	void viewBookingsTripDetails() {
-		clearScreen();
 		// Get current session user ID
 		User* currentUser = getCurrentSessionUser();
 		string userId = currentUser->get_userId();
@@ -584,7 +651,8 @@ namespace app {
 			string bookingID;
 			cout << "\n\n\tEnter Booking ID to view Trip Details (or 'exit' to go to user menu): ";
 			cin >> bookingID;
-			if (bookingID == "exit") {
+			bookingID = toUpper(bookingID);
+			if (bookingID == "EXIT") {
 				clearScreen();
 				userMenu();
 			}
@@ -617,7 +685,7 @@ namespace app {
 
 		cout << "\n\n\tTrip Details -" << booking->getBookingID() << endl << endl;
 		cout << "\tFlight Info\n";
-		cout << "\t---------------\n";
+		cout << "\t---------------------\n";
 
 		cout << "\tFlight Number: " << flight->getFlightNumber() << endl;
 		cout << "\tAirline: " << flight->getAirlineName() << endl;
@@ -628,7 +696,9 @@ namespace app {
 		cout << "\tArrival Time: " << flight->getArrivalTime() << endl;
 		cout << "\tFlight Duration: " << flight->getFlightDuration() << " hours" << endl;
 
+		cout << "\t---------------------\n";
 		cout << "\n\tPassenger Info\n";
+		cout << "\t---------------------\n";
 		util::ConsoleTable table;
 		table.addHeaders(headers);
 		for (const auto& ticket : tickets) {
@@ -636,12 +706,20 @@ namespace app {
 		}
 		table.printTable();
 
-		cout << "\n\n\t1. Cancel Booking\n";
-		cout << "\t2. Go Back to User Menu\n";
+		int count = 1;
+		if (booking->getStatus() == "Pending Cancellation") {
+			count = 0;
+		}
+
+		if (count == 1)
+			cout << "\n\n\t" << count << ". Cancel Booking\n";
+		else
+			cout << endl;
+		cout << "\t" << count + 1 <<". Go Back to User Menu\n";
 		cout << "\tEnter Your Choice: ";
 		string input;
 		cin >> input;
-		if (input == "1") {
+		if (input == "1" && count == 1) {
 			string confirm;
 			cout << "\n\tConfirm Cancellation? (Y/N): ";
 			cin >> confirm;
@@ -659,8 +737,135 @@ namespace app {
 		}
 		else {
 			clearScreen();
-			viewBookingsTripDetails();
+			userMenu();
 		}
+	}
+
+	void checkInBoardingPass() {
+		// Get current session user ID
+		User* currentUser = getCurrentSessionUser();
+		string userId = currentUser->get_userId();
+
+		// Filter bookings by the current user's ID
+		vector<Booking> userBookings = searchBookingsByUser(getBookings(), userId);
+
+		// Filter bookings by upcoming flights
+		string currentDate = getCurrentDate();
+		vector<Booking> upcomingBookings;
+		for (const auto& booking : userBookings) {
+			if (booking.getStatus() == "Scheduled") {
+				Flight* flight = findFlightByID(booking.getFlightNumber());
+				int days_between = days_between_dates(flight->getDateOfFlight(), currentDate);
+				if (days_between <= 4 && days_between >= 0) {
+					upcomingBookings.emplace_back(booking);
+				}
+			}
+		}
+		// sort upcoming bookings by check-in status
+		sortBookingsByCriteria(upcomingBookings, "checkInStatus", false);
+
+		asciiHeader();
+		cout << "\n\n\tCheck In/Boarding Pass\n\n";
+
+		util::ConsoleTable table;
+		vector<string> headers = { "Booking ID", "Flight Number", "Origin", "Destination", "Flight Date", "Check-In Status" };
+		table.addHeaders(headers);
+
+		for (const auto& booking : upcomingBookings) {
+			Flight* flight = findFlightByID(booking.getFlightNumber());
+			string checkInStatus = booking.getCheckInStatus() ? "Checked In" : "Not Checked In";
+			table.addRow({ booking.getBookingID(), booking.getFlightNumber(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), checkInStatus });
+		}
+		if (!upcomingBookings.empty()) {
+			table.printTable();
+			cout << "\n\n\tEnter Booking ID to Check In/Get Boarding Pass (or 'exit' to go to user menu): ";
+			string bookingID;
+			cin >> bookingID;
+			bookingID = toUpper(bookingID);
+			if (bookingID == "EXIT") {
+				clearScreen();
+				userMenu();
+			}
+
+			clearScreen();
+			asciiHeader();
+			int count = 0;
+			cout << "\n\n\tCheck In/Boarding Pass\n\n";
+			for (auto& booking : upcomingBookings) {
+				if (booking.getBookingID() == bookingID) {
+					if (booking.getCheckInStatus()) {
+						cout << "\n\tAlready Checked In!\n";
+					}
+					else {
+						string confirm;
+						cout << "\n\tWould you like to Check In? (Y/N): ";
+						cin >> confirm;
+						if (confirm == "Y" || confirm == "y") {
+							Booking* bookingToUpdate = findBookingByID(bookingID);
+							bookingToUpdate->setCheckInStatus(true);
+							clearScreen();
+							asciiHeader();
+							cout << "\n\tChecked In Successfully!\n\n";
+							break;
+						}
+						else {
+							cout << "\n\tCheck In Cancelled!";
+							delay(2000);
+							clearScreen();
+							userMenu();
+						}
+					}
+				}
+				else if (count == upcomingBookings.size() - 1) {
+					cout << "\n\tBooking not found! Please Try Again.";
+					delay(2000);
+					clearScreen();
+					checkInBoardingPass();
+				}
+				count++;
+			}
+
+			cout << "\t--------------------------------\n";
+			cout << "\tBoarding Pass\n";	
+			cout << "\t--------------------------------\n";
+			Booking* booking = findBookingByID(bookingID);
+			Flight* flight = findFlightByID(booking->getFlightNumber());
+			vector<Ticket> tickets = booking->getTickets();
+			cout << "\tBooking ID: " << booking->getBookingID() << endl;
+			cout << "\tFlight Number: " << flight->getFlightNumber() << endl;
+			cout << "\tAirline: " << flight->getAirlineName() << endl;
+			cout << "\tDate: " << flight->getDateOfFlight() << endl;
+			cout << "\tOrigin: " << flight->getOrigin() << endl;
+			cout << "\tDestination: " << flight->getDestination() << endl;
+			cout << "\tDeparture Time: " << flight->getDepartureTime() << endl;
+			cout << "\tArrival Time: " << flight->getArrivalTime() << endl;
+			cout << "\tFlight Duration: " << flight->getFlightDuration() << " hours" << endl;
+
+			cout << "\t--------------------------------\n";
+			cout << "\tPassenger Info\n";
+			cout << "\t--------------------------------\n";
+			for (const auto& ticket : tickets) {
+				cout << "\tTicket ID: " << toUpper(ticket.getTicketID()) << endl;
+				cout << "\tPassenger Name: " << ticket.getPassenger().get_name() << endl;
+				cout << "\tPassport Number: " << ticket.getPassenger().get_passportNumber() << endl;
+				cout << "\tPassport Issue Country: " << ticket.getPassenger().get_passportIssueCountry() << endl;
+				cout << "\tSeat Number: " << ticket.getSeatNumber() << endl;
+				cout << "\tTicket Type: " << ticket.getTicketType() << endl;
+				cout << "\t--------------------------------\n";
+			}
+
+		}
+		else {
+			cout << "\n\tNo Upcoming Flights Found!";
+			delay(2000);
+			clearScreen();
+			userMenu();
+		}
+		
+		cout << "\n\n\tPress any key to go back to the User Menu...";
+		_getch();
+		clearScreen();
+		userMenu();
 	}
 
 
@@ -683,9 +888,12 @@ namespace app {
 			bookFlight();
 			break;
 		case '2':
+			clearScreen();
 			viewBookingsTripDetails();
 			break;
 		case '3':
+			clearScreen();
+			checkInBoardingPass();
 			break;
 		case '4':
 			logout();
