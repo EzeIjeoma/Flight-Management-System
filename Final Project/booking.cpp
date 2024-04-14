@@ -3,7 +3,7 @@
 Booking::Booking(const string& bookingID, const string& userID, const string& flightNumber,
     const vector<Ticket>& tickets, const string& bookingDate, const string& status)
     : bookingID(bookingID), userID(userID), flightNumber(flightNumber),
-    tickets(tickets), bookingDate(bookingDate), status(status) {}
+    tickets(tickets), bookingDate(bookingDate), status(status), checkInStatus(false) {}
 
 string Booking::getBookingID() const {
     return bookingID;
@@ -31,4 +31,8 @@ string Booking::getStatus() const {
 
 void Booking::setStatus(const string& status) {
     this->status = status;
+}
+
+bool Booking::getCheckInStatus() const {
+	return checkInStatus;
 }

@@ -15,6 +15,7 @@ private:
     vector<Ticket> tickets;
     string bookingDate;
     string status;
+    bool checkInStatus;
 
 public:
     Booking(const string& bookingID, const string& userID, const string& flightNumber, const vector<Ticket>& ticket, const string& bookingDate, const string& status);
@@ -25,5 +26,6 @@ public:
     string getStatus() const;
     void setStatus(const string& status);
     vector<Ticket> getTickets() const;
+    bool getCheckInStatus() const;
 };
 

@@ -275,6 +275,10 @@ namespace util {
             cout << "\t";
             printSeparatorLine();
         }
+        void clear() {
+            rows.clear();
+            columnWidths.clear();
+        }
     private:
         void updateColumnWidths(const vector<string>& row) {
             for (size_t i = 0; i < row.size(); ++i) {

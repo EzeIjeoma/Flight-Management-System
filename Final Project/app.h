@@ -14,19 +14,6 @@
 
 using namespace std;
 
-//void welcome(string message);
-//void landingPage();
-//void delay(int milliseconds);
-//void clearScreen();
-//void asciiHeader();
-//void login();
-//void userMenu();
-//void adminMenu();
-//void signUpUser();
-//void logout();
-//void addAFlight();
-//void viewFlights();
-
 namespace app {
 
     void welcome(std::string message);
@@ -42,5 +29,7 @@ namespace app {
     void addAFlight();
     void viewFlights();
     void bookFlight();
+    void viewBookingsTripDetails();
+    void tripDetails(string bookingID);
 }
 

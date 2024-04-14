@@ -3,6 +3,8 @@
 #include <iostream>
 #include "util.h"
 
+#include <cassert>
+
 using namespace std;
 void loadData();
 
@@ -12,6 +14,69 @@ int main() {
     app::landingPage();
 	//app::bookFlight();
 }
+
+
+//int main() {
+//	// Create some sample flights
+//
+//	addFlight("FL001", "Delta", "2023-04-01", "NYC", "LAX", "06:00", "09:00", 30, 6, 2, 300.00, 150.00, 5.5);
+//	addFlight("FL002", "United", "2023-04-15", "NYC", "CHI", "07:00", "10:00", 30, 6, 2, 320.00, 160.00, 2.0);
+//	addFlight("FL003", "American", "2023-04-25", "NYC", "MIA", "08:00", "11:00", 30, 6, 2, 340.00, 170.00, 3.0);
+//
+//
+//	// Create some bookings
+//	std::vector<Booking> bookings = {
+//		Booking("B001", "U100", "FL001", vector<Ticket>(), "2023-04-01", "Confirmed"),
+//		Booking("B003", "U100", "FL004", vector<Ticket>(), "2023-04-19", "Confirmed"),
+//		Booking("B002", "U101", "FL002", vector<Ticket>(), "2023-04-15", "Pending"),
+//		Booking("B004", "U102", "FL003", vector<Ticket>(), "2023-04-25", "Pending")
+//	};
+//
+//	vector<Booking> results = searchBookingsByUser(bookings, "U100");
+//
+//	// Output the results and perform assertions
+//	std::cout << "Bookings for user U100:" << std::endl;
+//	for (const Booking& booking : results) {
+//		std::cout << "Booking ID: " << booking.getBookingID() << std::endl;
+//	}
+//
+//	// Asserts to ensure the function works as expected
+//	assert(results.size() == 2);  // Expect to find 2 bookings for user U100
+//	assert(results[0].getBookingID() == "B001" && results[1].getBookingID() == "B003");
+//
+//	std::cout << "All tests passed." << std::endl;
+//
+//	return 0;
+//}
+
+//int main() {
+//	// Create some sample flights
+//
+//	addFlight("FL001", "Delta", "2023-04-01", "NYC", "LAX", "06:00", "09:00", 30, 6, 2, 300.00, 150.00, 5.5);
+//	addFlight("FL002", "United", "2023-04-15", "NYC", "CHI", "07:00", "10:00", 30, 6, 2, 320.00, 160.00, 2.0);
+//	addFlight("FL003", "American", "2023-04-25", "NYC", "MIA", "08:00", "11:00", 30, 6, 2, 340.00, 170.00, 3.0);
+//
+//
+//	// Create some bookings
+//	std::vector<Booking> bookings = {
+//		Booking("B001", "U100", "FL001", vector<Ticket>(), "2023-04-01", "Confirmed"),
+//		Booking("B002", "U101", "FL002", vector<Ticket>(), "2023-04-15", "Pending"),
+//		Booking("B003", "U102", "FL003", vector<Ticket>(), "2023-04-25", "Pending")
+//	};
+//
+//	// Testing for bookings before a specific date
+//	std::vector<Booking> results = searchBookingsByFlightDate(bookings, "2023-04-20", true);
+//	std::cout << "Test for bookings before 2023-04-20:" << std::endl;
+//	for (const Booking& b : results) {
+//		std::cout << "Booking ID: " << b.getBookingID() << std::endl;
+//	}
+//
+//	// Assertions to validate the functionality
+//	assert(results.size() == 2);  // Expect to find 2 bookings before April 20, 2023
+//	assert(results[0].getBookingID() == "B001" && results[1].getBookingID() == "B002");
+//
+//	return 0;
+//}
 
 
 
@@ -55,24 +120,30 @@ void loadData() {
 	addFlight("SW012", "Southwest Airlines", "2024-12-10", "Lagos", "Houston", "02:30", "12:30", 10, 6, 2, 1500.0, 1200.0, 14.0);
 
 	registerUser("100", "John", "Doe", "jd", "1234", "user");
+	Passenger passenger3("John Doe", "P123456", "USA");
+	Passenger passenger4("Dele Momo", "P123456", "USA");
+	map<string, Passenger> seatToPassengerMap3;
+	seatToPassengerMap3["1A"] = passenger3;
+	seatToPassengerMap3["1B"] = passenger4;
+	bookFlight("100", "AF007", "Business", "2024-11-30", seatToPassengerMap3);
 
 	registerUser("180", "Tim", "Cook", "tim@gmail.com", "1234", "user");
 	Passenger passenger("John Doe", "P123456", "USA");
 	map<string, Passenger> seatToPassengerMap;
 	seatToPassengerMap["7A"] = passenger;
-	bookFlight("180", "AA123", "Economy", "2024-11-30", seatToPassengerMap);
+	bookFlight("100", "LH789", "Economy", "2024-11-30", seatToPassengerMap);
 
 
 	registerUser("181", "Dele", "Amodu", "del@mail.com", "1234", "user");
 	Passenger passenger1("John Doe", "P123456", "USA");
 	map<string, Passenger> seatToPassengerMap1;
 	seatToPassengerMap1["1A"] = passenger1; 
-	bookFlight("181", "AA123", "Business", "2024-11-30", seatToPassengerMap1);
+	bookFlight("100", "AA123", "Business", "2024-11-30", seatToPassengerMap1);
 
 
 	registerUser("182", "Ade", "Bola", "bola@gmail.com", "1234", "user");
 	Passenger passenger2("Jane Doe", "P654321", "Canada");
 	map<string, Passenger> seatToPassengerMap2;
 	seatToPassengerMap2["6B"] = passenger2;
-	bookFlight("182", "DL456", "Economy", "2024-11-30", seatToPassengerMap2);
+	bookFlight("100", "DL456", "Economy", "2024-11-30", seatToPassengerMap2);
 }
