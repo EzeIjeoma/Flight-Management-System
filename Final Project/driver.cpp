@@ -1,6 +1,5 @@
 #include "app.h"
 #include "flightMgtSys.h"
-#include "Flight.h"
 #include <iostream>
 #include "util.h"
 
@@ -9,8 +8,9 @@ void loadData();
 
 int main() {
 	loadData();
-    welcome("SKY HIGH FLIGHT BOOKING SERVICES");
-    landingPage();
+    //welcome("SKY HIGH FLIGHT BOOKING SERVICES");
+    app::landingPage();
+	//app::bookFlight();
 }
 
 
@@ -18,7 +18,7 @@ int main() {
 // This is a function that loads dummy data to pre-populate the system
 void loadData() {
 	// We are creating admin users here
-	createAdmin(getUserId(), "Ijun", "Adams", "ij@skyhigh.com", "1234", "Manager");
+	createAdmin(getUserId(), "Ijun", "Adams", "ij", "1234", "Manager");
 	createAdmin(getUserId(), "Daniel", "Johnson", "dan@skyhigh.com", "1234", "Flight Adminstrator");
 	createAdmin(getUserId(), "Paul", "Smith", "paul@skyhigh.com", "1234", "Booking Attendant");
 	
