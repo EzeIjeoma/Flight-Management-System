@@ -1,0 +1,6 @@
+BookingID,UserID,FlightNumber,BookingDate,Status,CheckInStatus
+AF04550,100,AF007,2024-04-14,Scheduled,Not Checked In
+LH74550,100,LH789,2024-04-14,Scheduled,Not Checked In
+AA14550,100,AA123,2024-11-30,Scheduled,Not Checked In
+DL44550,100,DL456,2024-11-30,Scheduled,Not Checked In
+AF04550,182,AF007,2024-11-19,Scheduled,Not Checked In

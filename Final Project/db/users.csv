@@ -1,0 +1,8 @@
+Type,UserID,FirstName,LastName,Email,Password,UserType,AdminRole
+User,182,Ade,Bola,bola@gmail.com,1234,user,
+Admin,002,Daniel,Johnson,dan@skyhigh.com,1234,Admin,Flight Adminstrator
+User,181,Dele,Amodu,del@mail.com,1234,user,
+Admin,001,Ijun,Adams,ij,1234,Admin,Manager
+User,100,John,Doe,jd,1234,user,
+Admin,003,Paul,Smith,paul@skyhigh.com,1234,Admin,Booking Attendant
+User,180,Tim,Cook,tim@gmail.com,1234,user,
