@@ -40,3 +40,7 @@ bool Booking::getCheckInStatus() const {
 void Booking::setCheckInStatus(bool status) {
 	this->checkInStatus = status;
 }
+
+void Booking::addTicket(const Ticket& ticket) {
+	tickets.push_back(ticket);
+}

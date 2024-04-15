@@ -24,6 +24,9 @@ private:
 	double flightDuration;
 	double businessPrice;
 	double regularPrice;
+	int totalRows;
+	int seatsPerRow;
+	int businessRows;
 	map<string, SeatInfo> seats;
 	util::TwoDArrayADT<string> manifest;
 	void initializeSeats(int totalRows, int seatsPerRow, int businessRows, double businessPrice, double regularPrice);
@@ -44,6 +47,9 @@ public:
 	double getFlightDuration() const;
 	double getBusinessPrice() const;
 	double getRegularPrice() const;
+	int getTotalRows() const;
+	int getSeatsPerRow() const;
+	int getBusinessRows() const;
 	vector<string> getAvailableSeats(string criteria = "all") const;
 	bool bookSeat(const string& seatNumber);
 	const map<string, SeatInfo>* getSeats() const;

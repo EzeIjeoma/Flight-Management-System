@@ -30,7 +30,7 @@ namespace app {
 		}
 
 		table.printTable();
-		cout << "\n\nPress any key to go back to the Admin Menu...";
+		cout << "\n\n\tPress any key to go back to the Admin Menu...";
 		_getch();
 
 		clearScreen();
@@ -144,7 +144,7 @@ namespace app {
 
 		asciiHeader();
 		cout << "\n\n\tFlight Manifest\n\n";
-		cout << "\tEnter Flight Number: ";
+		cout << "\tEnter Flight Number (or 'exit' to go to admin menu): ";
 		cin >> flightNumber;
 		if (checkAndExit()) return;
 		flightNumber = toUpper(flightNumber);
@@ -312,6 +312,7 @@ namespace app {
 	}
 
 	void adminMenu() {
+		 writeToCSV();
 		int menuChoice;
 		asciiHeader();
 		cout << "\n\n\tAdmin Menu\n\n";
@@ -870,6 +871,7 @@ namespace app {
 
 
 	void userMenu() {
+		writeToCSV();
 		string input;
 		char menuChoice;
 		asciiHeader();
@@ -920,7 +922,7 @@ namespace app {
 		cin >> email;
 		cout << "\tEnter Password: ";
 		cin >> password;
-		if (loginUser(email, password)) {
+		if (loginUser(toLower(email), password)) {
 			User* user = getCurrentSessionUser();
 			if (user->get_user_type() == "Admin") {
 				clearScreen();
@@ -971,7 +973,7 @@ namespace app {
 		cout << "\tEnter Email: ";
 		cin >> input;
 		if (checkAndExit(input)) return;
-		email = input;
+		email = toLower(input);
 		
 		cout << "\tEnter Password: ";
 		cin >> input;
@@ -993,6 +995,7 @@ namespace app {
 	}
 
 	void landingPage() {
+		writeToCSV();
 		char menuChoice;
 		string input;
 		cout << setw(0);
@@ -1021,8 +1024,9 @@ namespace app {
 			break;
 		case '4':
 			clearScreen();
-			welcome("THANK YOU FOR CHOOSING SKY HIGH AIRLINES");
-			break;
+			writeToCSV();
+			cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\tTHANK YOU FOR CHOOSING SKY HIGH AIRLINES\n\n";
+			exit(EXIT_SUCCESS);
 		default:
 			cout << "\n\tInvalid Input! Please Try Again.";
 			delay(2000);
@@ -1082,6 +1086,18 @@ namespace app {
 		#else
 		system("clear");
 		#endif
+	}
+
+	void readFromCSV() {
+		importUsersFromCSV("./db/users.csv");
+		importFlightsFromCSV("./db/flights.csv");
+		importBookingsFromCSV("./db/bookings.csv", "./db/tickets.csv");
+	}
+
+	void writeToCSV() {
+		exportUsersToCSV("./db/users.csv");
+		exportFlightsToCSV("./db/flights.csv");
+		exportBookingsToCSV("./db/bookings.csv", "./db/tickets.csv");
 	}
 
 }

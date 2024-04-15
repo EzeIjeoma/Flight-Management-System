@@ -17,10 +17,6 @@
 using namespace std;
 using namespace chrono;
 
-
-// Checkin management
-
-
 // Booking Management
 vector<Booking> searchBookingsByStatus(const std::vector<Booking>& bookings, const std::string& status);
 vector<Booking> searchBookingsByDate(const std::vector<Booking>& bookings, const std::string& date, bool searchBefore);
@@ -31,7 +27,7 @@ bool adminCancelBooking(const string bookingID);
 bool keepCancellationRequest(const string bookingID);
 bool requestBookingCancellation(const string bookingID);
 Booking* findBookingByID(const string& bookingID);
-bool bookFlight(const string& userID, const string& flightNumber, const string& ticketType, const string& bookingDate, const map<string, Passenger>& seatToPassengerMap);
+bool bookFlight(const string& userID, const string& flightNumber, const string& ticketType, const string& bookingDate, const map<string, Passenger>& seatToPassengerMap, const string& bookingID = "");
 Booking* getCancelledBooking();
 vector<Booking>& getBookings();
 
@@ -61,7 +57,16 @@ string getUserId();
 string currentDate();
 string getCurrentDate();
 string toUpper(string str);
+string toLower(string str);
 bool writeCSVToFile(const string& fileName, string& csvData, string& filepath);
 string formatCSVContent(const string& content);
 bool openExcel(const string& filePath);
 int days_between_dates(const string& date1, const string& date2);
+
+// Read and write data to files
+void exportUsersToCSV(const string& filename);
+void importUsersFromCSV(const string& filename);
+void exportFlightsToCSV(const string& filename);
+void importFlightsFromCSV(const string& filename);
+void exportBookingsToCSV(const string& bookingsFilename, const string& ticketsFilename);
+void importBookingsFromCSV(const string& bookingsFilename, const string& ticketsFilename);

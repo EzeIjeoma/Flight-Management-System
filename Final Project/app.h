@@ -11,6 +11,7 @@
 #include "util.h"
 #include <conio.h>
 #include <cctype>
+#include <cstdlib>
 
 using namespace std;
 
@@ -34,5 +35,7 @@ namespace app {
     void viewFlightManifest();
     void checkInBoardingPass();
     void processCancellation();
+    void readFromCSV();
+    void writeToCSV();
 }
 

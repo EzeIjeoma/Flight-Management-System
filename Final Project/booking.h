@@ -28,5 +28,6 @@ public:
     vector<Ticket> getTickets() const;
     bool getCheckInStatus() const;
     void setCheckInStatus(bool status);
+    void addTicket(const Ticket& ticket);
 };
 

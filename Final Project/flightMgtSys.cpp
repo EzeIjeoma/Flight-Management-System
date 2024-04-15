@@ -20,16 +20,17 @@ vector<Booking> searchBookingsByStatus(const std::vector<Booking>& bookings, con
     return result;
 }
 
-std::vector<Booking> searchBookingsByDate(const std::vector<Booking>& bookings, const std::string& date, bool searchBefore) {
+vector<Booking> searchBookingsByDate(const std::vector<Booking>& bookings, const std::string& date, bool searchBefore) {
     std::vector<Booking> result;
     for (const Booking& booking : bookings) {
+        Flight* flight = findFlightByID(booking.getFlightNumber());
         if (searchBefore) {
-            if (booking.getBookingDate() < date) {
+            if (flight->getDateOfFlight() < date) {
                 result.push_back(booking);
             }
         }
         else {
-            if (booking.getBookingDate() > date) {
+            if (flight->getDateOfFlight() > date) {
                 result.push_back(booking);
             }
         }
@@ -97,10 +98,10 @@ void sortBookingsByCriteria(vector<Booking>& bookingList, const string& criterio
     }
 }
 
-bool bookFlight(const string& userID, const string& flightNumber, const string& ticketType, const string& bookingDate, const map<string, Passenger>& seatToPassengerMap) {
+bool bookFlight(const string& userID, const string& flightNumber, const string& ticketType, const string& bookingDate, const map<string, Passenger>& seatToPassengerMap, const string& bookingID) {
     Flight* flight = findFlightByID(flightNumber);
     if (!flight) {
-        cout << "Flight not found." << endl;
+        cout << "\tFlight not found." << endl;
         return false;
     }
 
@@ -122,15 +123,19 @@ bool bookFlight(const string& userID, const string& flightNumber, const string& 
         tickets.push_back(Ticket(ticketID, passenger, flightNumber, ticketType, seatNumber, price));
     }
 
-    auto now = chrono::system_clock::now();
-    auto now_c = chrono::system_clock::to_time_t(now);
-    tm now_tm = {};
-    localtime_s(&now_tm, &now_c);
-    stringstream ss;
-    ss << put_time(&now_tm, "%M%S");
-    string bookingID = flightNumber.substr(0, 3) + ss.str();
-
-    bookings.emplace_back(bookingID, userID, flightNumber, tickets, bookingDate, "Scheduled");
+    if (bookingID == "") {
+		auto now = chrono::system_clock::now();
+		auto now_c = chrono::system_clock::to_time_t(now);
+		tm now_tm = {};
+		localtime_s(&now_tm, &now_c);
+		stringstream ss;
+		ss << put_time(&now_tm, "%M%S");
+		string bookID = flightNumber.substr(0, 3) + ss.str();
+        bookings.emplace_back(bookID, userID, flightNumber, tickets, bookingDate, "Scheduled");
+    }
+    else {
+		bookings.emplace_back(bookingID, userID, flightNumber, tickets, bookingDate, "Scheduled");
+	}
 
     return true;
 }
@@ -303,7 +308,7 @@ User* findUserByEmail(const string& email) {
         User* user = users.searchByKey(email);
         return user;
     }
-    catch (std::runtime_error& e) {
+    catch (std::runtime_error&) {
         return nullptr;
     }
 }
@@ -358,6 +363,11 @@ string toUpper(string str) {
     return str;
 }
 
+string toLower(string str) {
+	transform(str.begin(), str.end(), str.begin(), ::tolower);
+	return str;
+}
+
 bool writeCSVToFile(const string& fileName, string& csvData, string& filePath) {
     char* userProfilePath = nullptr;
     size_t size = 0;
@@ -388,7 +398,7 @@ string formatCSVContent(const string& content) {
             formatted += c;
         }
     }
-    formatted += "\""; // End with a quote
+    formatted += "\"";
     return formatted;
 }
 
@@ -416,4 +426,191 @@ int days_between_dates(const string& date1, const string& date2) {
     auto duration = tp1 - tp2;
     auto durationInHours = duration_cast<hours>(duration).count();
     return (durationInHours / 24);
+}
+
+
+// Read and write data to files
+void exportUsersToCSV(const string& filename) {
+    ofstream outFile(filename);
+    if (!outFile.is_open()) {
+        return;
+    }
+    vector<User*> userList = users.traverse();
+    outFile << "Type,UserID,FirstName,LastName,Email,Password,UserType,AdminRole\n";
+    for (User* user : userList) {
+        FlightAdmin* admin = dynamic_cast<FlightAdmin*>(user);
+        if (admin) {
+            outFile << "Admin," << admin->get_userId() << "," << admin->get_first_name() << ","
+                << admin->get_last_name() << "," << admin->get_email() << "," << admin->get_password() << ","
+                << admin->get_user_type() << "," << admin->get_adminRole() << "\n";
+        }
+        else {
+            outFile << "User," << user->get_userId() << "," << user->get_first_name() << ","
+                << user->get_last_name() << "," << user->get_email() << "," << user->get_password() << "," << user->get_user_type() << ",\n";
+        }
+    }
+    outFile.close();
+}
+
+void importUsersFromCSV(const string& filename) {
+    ifstream inFile(filename);
+    string line;
+    if (!inFile.is_open()) {
+        return;
+    }
+    getline(inFile, line);
+    while (getline(inFile, line)) {
+        stringstream ss(line);
+        string type, userId, firstName, lastName, email, password, userType, adminRole;
+        getline(ss, type, ',');
+        getline(ss, userId, ',');
+        getline(ss, firstName, ',');
+        getline(ss, lastName, ',');
+        getline(ss, email, ',');
+        getline(ss, password, ',');
+        getline(ss, userType, ',');
+        getline(ss, adminRole);
+
+        if (type == "Admin") {
+            createAdmin(userId, firstName, lastName, email, password, adminRole);
+        }
+        else if (type == "User") {
+            registerUser(userId, firstName, lastName, email, password, userType);
+        }
+    }
+    inFile.close();
+}
+
+void exportFlightsToCSV(const string& filename) {
+    ofstream outFile(filename);
+    if (!outFile.is_open()) {
+        return;
+    }
+    outFile << "FlightNumber,AirlineName,DateOfFlight,Origin,Destination,DepartureTime,ArrivalTime,TotalRows,SeatsPerRow,BusinessRows,BusinessPrice,RegularPrice,FlightDuration\n";
+    for (const Flight& flight : flights) {
+        outFile << flight.getFlightNumber() << "," << flight.getAirlineName() << ","
+            << flight.getDateOfFlight() << "," << flight.getOrigin() << ","
+            << flight.getDestination() << "," << flight.getDepartureTime() << ","
+            << flight.getArrivalTime() << "," << flight.getTotalRows() << ","
+            << flight.getSeatsPerRow() << "," << flight.getBusinessRows() << ","
+            << flight.getBusinessPrice() << "," << flight.getRegularPrice() << ","
+            << flight.getFlightDuration() << "\n";
+    }
+
+    outFile.close();
+}
+
+void importFlightsFromCSV(const string& filename) {
+    ifstream inFile(filename);
+    if (!inFile.is_open()) {
+        return;
+    }
+    string line;
+    getline(inFile, line);
+    while (getline(inFile, line)) {
+        stringstream ss(line);
+        string flightNumber, airlineName, dateOfFlight, origin, destination, departureTime, arrivalTime;
+        int totalRows, seatsPerRow, businessRows;
+        double businessPrice, regularPrice, flightDuration;
+        getline(ss, flightNumber, ',');
+        getline(ss, airlineName, ',');
+        getline(ss, dateOfFlight, ',');
+        getline(ss, origin, ',');
+        getline(ss, destination, ',');
+        getline(ss, departureTime, ',');
+        getline(ss, arrivalTime, ',');
+        ss >> totalRows;
+        ss.ignore(1, ',');
+        ss >> seatsPerRow;
+        ss.ignore(1, ',');
+        ss >> businessRows;
+        ss.ignore(1, ',');
+        ss >> businessPrice;
+        ss.ignore(1, ',');
+        ss >> regularPrice;
+        ss.ignore(1, ',');
+        ss >> flightDuration;
+
+        addFlight(flightNumber, airlineName, dateOfFlight, origin, destination, departureTime, arrivalTime,
+            totalRows, seatsPerRow, businessRows, businessPrice, regularPrice, flightDuration);
+    }
+    inFile.close();
+}
+
+void exportBookingsToCSV(const string& bookingsFilename, const string& ticketsFilename) {
+    ofstream bookingsFile(bookingsFilename);
+    ofstream ticketsFile(ticketsFilename);
+
+    if (!bookingsFile.is_open() || !ticketsFile.is_open()) {
+        cerr << "Error opening one or more files." << endl;
+        return;
+    }
+
+    bookingsFile << "BookingID,UserID,FlightNumber,BookingDate,Status,CheckInStatus\n";
+    ticketsFile << "BookingID,TicketID,PassengerName,PassportNumber,PassportIssueCountry,FlightNumber,TicketType,SeatNumber,Price\n";
+
+    for (const Booking& booking : bookings) {
+        bookingsFile << booking.getBookingID() << "," << booking.getUserID() << ","
+            << booking.getFlightNumber() << "," << booking.getBookingDate() << ","
+            << booking.getStatus() << "," << (booking.getCheckInStatus() ? "Checked In" : "Not Checked In") << "\n";
+        for (const Ticket& ticket : booking.getTickets()) {
+            const Passenger& passenger = ticket.getPassenger();
+            ticketsFile << booking.getBookingID() << "," << ticket.getTicketID() << "," << passenger.get_name() << ","
+                << passenger.get_passportNumber() << "," << passenger.get_passportIssueCountry() << ","
+                << ticket.getFlightNumber() << "," << ticket.getTicketType() << ","
+                << ticket.getSeatNumber() << "," << ticket.getPrice() << "\n";
+        }
+    }
+    bookingsFile.close();
+    ticketsFile.close();
+}
+
+void importBookingsFromCSV(const string& bookingsFilename, const string& ticketsFilename) {
+    ifstream bookingsFile(bookingsFilename);
+    ifstream ticketsFile(ticketsFilename);
+    map<string, vector<Ticket>> ticketMap;
+    if (!bookingsFile.is_open() || !ticketsFile.is_open()) {
+        cerr << "Error opening one or more files." << endl;
+        return;
+    }
+    string line;
+    getline(ticketsFile, line);
+    while (getline(ticketsFile, line)) {
+        stringstream ss(line);
+        string bookingID, ticketID, passengerName, passportNumber, passportIssueCountry, flightNumber, ticketType, seatNumber, priceStr;
+        getline(ss, bookingID, ',');
+        getline(ss, ticketID, ',');
+        getline(ss, passengerName, ',');
+        getline(ss, passportNumber, ',');
+        getline(ss, passportIssueCountry, ',');
+        getline(ss, flightNumber, ',');
+        getline(ss, ticketType, ',');
+        getline(ss, seatNumber, ',');
+        getline(ss, priceStr);
+        double price = stod(priceStr);
+        Passenger passenger(passengerName, passportNumber, passportIssueCountry);
+        Ticket newTicket(ticketID, passenger, flightNumber, ticketType, seatNumber, price);
+        ticketMap[bookingID].push_back(newTicket);
+    }
+
+    getline(bookingsFile, line);
+    while (getline(bookingsFile, line)) {
+        stringstream ss(line);
+        string bookingID, userID, flightNumber, bookingDate, status, checkInStatus;
+        getline(ss, bookingID, ',');
+        getline(ss, userID, ',');
+        getline(ss, flightNumber, ',');
+        getline(ss, bookingDate, ',');
+        getline(ss, status, ',');
+        getline(ss, checkInStatus);
+
+        bool checkIn = (checkInStatus == "Checked In");
+        vector<Ticket> tickets = ticketMap[bookingID];
+        Booking newBooking(bookingID, userID, flightNumber, tickets, bookingDate, status);
+        newBooking.setCheckInStatus(checkIn);
+        bookings.push_back(newBooking);
+    }
+
+    bookingsFile.close();
+    ticketsFile.close();
 }

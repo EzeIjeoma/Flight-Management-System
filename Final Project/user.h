@@ -18,6 +18,7 @@ private:
 
 public:
 	User(const string& userId, const string& first_name, const string& last_name, const string& email, const string& password, const string& user_type);
+	virtual ~User() {}
 	string get_userId() const;
 	string get_first_name() const;
 	string get_last_name() const;

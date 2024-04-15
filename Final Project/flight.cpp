@@ -5,7 +5,8 @@ Flight::Flight(const string& flightNumber, const string& airlineName, const stri
     const string& destination, const string& departureTime, const string& arrivalTime,
     int totalRows, int seatsPerRow, int businessRows, double businessPrice, double regularPrice, double flightDuration)
     : flightNumber(flightNumber), airlineName(airlineName), dateOfFlight(dateOfFlight), origin(origin), destination(destination),
-    departureTime(departureTime), arrivalTime(arrivalTime), businessPrice(businessPrice), regularPrice(regularPrice), flightDuration(flightDuration),
+    departureTime(departureTime), arrivalTime(arrivalTime), businessPrice(businessPrice), regularPrice(regularPrice), totalRows(totalRows), 
+    seatsPerRow(seatsPerRow), businessRows(businessRows), flightDuration(flightDuration),
     manifest((totalRows* seatsPerRow), 6, "")
 {
     initializeSeats(totalRows, seatsPerRow, businessRows, businessPrice, regularPrice);
@@ -89,6 +90,18 @@ double Flight::getBusinessPrice() const {
 
 double Flight::getRegularPrice() const {
 	return regularPrice;
+}
+
+int Flight::getTotalRows() const {
+	return totalRows;
+}
+
+int Flight::getSeatsPerRow() const {
+	return seatsPerRow;
+}
+
+int Flight::getBusinessRows() const {
+	return businessRows;
 }
 
 vector<string> Flight::getAvailableSeats(string criteria) const {
