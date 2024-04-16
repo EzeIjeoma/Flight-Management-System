@@ -8,30 +8,6 @@ vector<Flight> flights;
 vector<Booking> bookings;
 int userId = 0;
 
-void displayAparticularBooking(string BookingID) {
-    BookingID = toUpper(BookingID);
-    for (Booking booking : bookings) {
-			cout << "Booking ID: " << booking.getBookingID() << endl;
-			cout << "User ID: " << booking.getUserID() << endl;
-			cout << "Flight Number: " << booking.getFlightNumber() << endl;
-			cout << "Booking Date: " << booking.getBookingDate() << endl;
-			cout << "Status: " << booking.getStatus() << endl;
-			cout << "Check In Status: " << (booking.getCheckInStatus() ? "Checked In" : "Not Checked In") << endl;
-			cout << "Tickets: " << booking.getTickets().size() << endl << endl;
-	}
-}
-
-void displayParticularFlight(string flightNumber) {
-    flightNumber = toUpper(flightNumber);
-    for (Flight flight : flights) {
-        if (flight.getFlightNumber() == flightNumber) {
-            cout << "Flight Number: " << flight.getFlightNumber() << endl;
-            cout << "Airline: " << flight.getAirlineName() << endl;
-        }
-    }
-}
-
-
 // Booking Management
 vector<Booking> searchBookingsByStatus(const std::vector<Booking>& bookings, const std::string& status) {
     std::vector<Booking> result;
@@ -632,11 +608,6 @@ void importBookingsFromCSV(const string& bookingsFilename, const string& tickets
         Booking newBooking(bookingID, userID, flightNumber, tickets, bookingDate, status);
         newBooking.setCheckInStatus(checkIn);
         bookings.push_back(newBooking);
-
-        //cout << "Booking ID: " << newBooking.getBookingID() << endl;
-        //cout << "User ID: " << newBooking.getUserID() << endl;
-        //cout << "Tickets: " << newBooking.getTickets().size() << endl;
-        //cout << endl;
     }
 
     bookingsFile.close();

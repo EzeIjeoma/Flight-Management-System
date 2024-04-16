@@ -17,9 +17,6 @@
 using namespace std;
 using namespace chrono;
 
-void displayAparticularBooking(string BookingID);
-void displayParticularFlight(string flightNumber);
-
 // Booking Management
 vector<Booking> searchBookingsByStatus(const std::vector<Booking>& bookings, const std::string& status);
 vector<Booking> searchBookingsByDate(const std::vector<Booking>& bookings, const std::string& date, bool searchBefore);
