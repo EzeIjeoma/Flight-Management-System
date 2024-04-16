@@ -562,7 +562,7 @@ namespace app {
 		
 		vector<Booking> cancelledBookings;
 		cancelledBookings = searchBookingsByStatus(userBookings, "Cancelled");
-		cancelledBookings = searchBookingsByDate(cancelledBookings, currentDate, true);
+		cancelledBookings = searchBookingsByDate(cancelledBookings, currentDate, false);
 
 
 		asciiHeader();
@@ -572,82 +572,95 @@ namespace app {
 		vector<string> headers = { "Booking ID", "Booking Date", "Origin", "Destination", "Flight Date", "Status"};
 
 		int countOfTablesWithData = 0;
-		// Table for confirmed bookings
-		table.addHeaders(headers);
 
-		sortBookingsByCriteria(confirmedBookings, "bookingDate", false);
-		for (const auto& booking : confirmedBookings) {
-			Flight* flight = findFlightByID(booking.getFlightNumber());
-			table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
-		}
-		cout << "\n\tScheduled Bookings\n";
 		if (!confirmedBookings.empty()) {
-			countOfTablesWithData++;
-			cout << endl;
-			table.printTable();
-		}
-		else {
-			cout << "\t--------------------------------\n";
-			cout << "\tNo Active Scheduled Bookings Found!\n";
-		}
+			// Table for confirmed bookings
+			table.addHeaders(headers);
 
-		// Reset the table for pending cancellation bookings
-		table.clear();
-		table.addHeaders(headers);
-		sortBookingsByCriteria(pendingCancelBookings, "bookingDate", false);
-		for (const auto& booking : pendingCancelBookings) {
-			Flight* flight = findFlightByID(booking.getFlightNumber());
-			table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
+			sortBookingsByCriteria(confirmedBookings, "bookingDate", false);
+			for (const auto& booking : confirmedBookings) {
+				Flight* flight = findFlightByID(booking.getFlightNumber());
+				table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
 			}
-		cout << "\n\tPending Cancellation Bookings\n";
+			cout << "\n\tScheduled Bookings\n";
+			if (!confirmedBookings.empty()) {
+				countOfTablesWithData++;
+				cout << endl;
+				table.printTable();
+			}
+			else {
+				cout << "\t--------------------------------\n";
+				cout << "\tNo Active Scheduled Bookings Found!\n";
+			}
+		}
+
+		
 		if (!pendingCancelBookings.empty()) {
-			countOfTablesWithData++;
-			cout << endl;
-			table.printTable();
-		}
-		else {
-			cout << "\t--------------------------------\n";
-			cout << "\tNo Pending Cancellation Bookings Found!\n";
+			// Reset the table for pending cancellation bookings
+			table.clear();
+			table.addHeaders(headers);
+			sortBookingsByCriteria(pendingCancelBookings, "bookingDate", false);
+			for (const auto& booking : pendingCancelBookings) {
+				Flight* flight = findFlightByID(booking.getFlightNumber());
+				table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
+			}
+			cout << "\n\tPending Cancellation Bookings\n";
+			if (!pendingCancelBookings.empty()) {
+				countOfTablesWithData++;
+				cout << endl;
+				table.printTable();
+			}
+			else {
+				cout << "\t--------------------------------\n";
+				cout << "\tNo Pending Cancellation Bookings Found!\n";
+			}
 		}
 
-		// Reset the table for expired bookings
-		table.clear();
-		table.addHeaders(headers);
-		sortBookingsByCriteria(expiredBookings, "bookingDate", false);
-		for (const auto& booking : expiredBookings) {
-			Flight* flight = findFlightByID(booking.getFlightNumber());
-			table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
-		}
-		cout << "\n\tExpired Bookings\n";
+
 		if (!expiredBookings.empty()) {
-			countOfTablesWithData++;
-			cout << endl;
-			table.printTable();
-		}
-		else {
-			cout << "\t--------------------------------\n";
-			cout << "\tNo Expired Bookings Found!\n";
+			// Reset the table for expired bookings
+			table.clear();
+			table.addHeaders(headers);
+			sortBookingsByCriteria(expiredBookings, "bookingDate", false);
+			for (const auto& booking : expiredBookings) {
+				Flight* flight = findFlightByID(booking.getFlightNumber());
+				table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
+			}
+			cout << "\n\tExpired Bookings\n";
+			if (!expiredBookings.empty()) {
+				countOfTablesWithData++;
+				cout << endl;
+				table.printTable();
+			}
+			else {
+				cout << "\t--------------------------------\n";
+				cout << "\tNo Expired Bookings Found!\n";
+			}
 		}
 
-		// Reset the table for cancelled bookings
-		table.clear();
-		table.addHeaders(headers);
-		sortBookingsByCriteria(cancelledBookings, "bookingDate", false);
-		for (const auto& booking : cancelledBookings) {
-			Flight* flight = findFlightByID(booking.getFlightNumber());
-			table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
-		}
-		cout << "\n\tCancelled Bookings\n";
+
 		if (!cancelledBookings.empty()) {
-			countOfTablesWithData++;
-			cout << endl;
-			table.printTable();
-		}
-		else {
-			cout << "\t--------------------------------\n";
-			cout << "\tNo Cancelled Bookings Found!\n";
+			// Reset the table for cancelled bookings
+			table.clear();
+			table.addHeaders(headers);
+			sortBookingsByCriteria(cancelledBookings, "bookingDate", false);
+			for (const auto& booking : cancelledBookings) {
+				Flight* flight = findFlightByID(booking.getFlightNumber());
+				table.addRow({ booking.getBookingID(), booking.getBookingDate(), flight->getOrigin(), flight->getDestination(), flight->getDateOfFlight(), booking.getStatus() });
+			}
+			cout << "\n\tCancelled Bookings\n";
+			if (!cancelledBookings.empty()) {
+				countOfTablesWithData++;
+				cout << endl;
+				table.printTable();
+			}
+			else {
+				cout << "\t--------------------------------\n";
+				cout << "\tNo Cancelled Bookings Found!\n";
+			}
 		}
 
+		// Check if there are any bookings to display
 		if (countOfTablesWithData > 0) {
 			string bookingID;
 			cout << "\n\n\tEnter Booking ID to view Trip Details (or 'exit' to go to user menu): ";
@@ -660,6 +673,7 @@ namespace app {
 			tripDetails(bookingID);
 		}
 		else {
+			cout << "\n\t No Bookings Found! Please Try Again.\n";
 			cout << "\n\tPress any key to go back to the User Menu...";
 			_getch();
 		}

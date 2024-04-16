@@ -475,6 +475,7 @@ void importUsersFromCSV(const string& filename) {
         }
         else if (type == "User") {
             registerUser(userId, firstName, lastName, email, password, userType);
+            getUserId();
         }
     }
     inFile.close();
@@ -604,10 +605,16 @@ void importBookingsFromCSV(const string& bookingsFilename, const string& tickets
         getline(ss, checkInStatus);
 
         bool checkIn = (checkInStatus == "Checked In");
-        vector<Ticket> tickets = ticketMap[bookingID];
-        Booking newBooking(bookingID, userID, flightNumber, tickets, bookingDate, status);
-        newBooking.setCheckInStatus(checkIn);
-        bookings.push_back(newBooking);
+        vector<Ticket>& tickets = ticketMap[bookingID];
+        Booking* newBooking = new Booking(bookingID, userID, flightNumber, tickets, bookingDate, status);
+        newBooking->setCheckInStatus(checkIn);
+        bookings.push_back(*newBooking);
+
+        // Enqueue if status is "Pending Cancellation"
+        if (status == "Pending Cancellation") {
+            cancelledBookingsQueue.enqueue(newBooking);
+        }
+
     }
 
     bookingsFile.close();
