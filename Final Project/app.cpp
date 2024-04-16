@@ -378,12 +378,12 @@ namespace app {
 		cout << "\tEnter Departure City: ";
 		cin >> input;
 		if (checkAndExitToUserMenu()) return;
-		departureCity = input;
+		departureCity = toLower(input);
 
 		cout << "\tEnter Destination City: ";
 		cin >> input;
 		if (checkAndExitToUserMenu()) return;
-		destinationCity = input;
+		destinationCity = toLower(input);
 
 		cout << "\tEnter Flight Date (YYYY-MM-DD): ";
 		cin >> input;
@@ -857,7 +857,7 @@ namespace app {
 
 		}
 		else {
-			cout << "\n\tNo Upcoming Flights Found!";
+			cout << "\n\tNo Available CheckIns Found!";
 			delay(2000);
 			clearScreen();
 			userMenu();
