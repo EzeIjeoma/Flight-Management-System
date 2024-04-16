@@ -7,5 +7,6 @@ using namespace std;
 
 int main() {
 	 app::readFromCSV();
-     app::landingPage();
+     //app::landingPage();
+	 displayAparticularBooking("AF04550");
 }

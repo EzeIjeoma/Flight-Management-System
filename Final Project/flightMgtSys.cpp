@@ -8,6 +8,41 @@ vector<Flight> flights;
 vector<Booking> bookings;
 int userId = 0;
 
+void displayAparticularBooking(string BookingID) {
+    BookingID = toUpper(BookingID);
+    for (Booking booking : bookings) {
+			cout << "Booking ID: " << booking.getBookingID() << endl;
+			cout << "User ID: " << booking.getUserID() << endl;
+			cout << "Flight Number: " << booking.getFlightNumber() << endl;
+			cout << "Booking Date: " << booking.getBookingDate() << endl;
+			cout << "Status: " << booking.getStatus() << endl;
+			cout << "Check In Status: " << (booking.getCheckInStatus() ? "Checked In" : "Not Checked In") << endl;
+			cout << "Tickets: " << endl;
+            for (Ticket ticket : booking.getTickets()) {
+				cout << "\tTicket ID: " << ticket.getTicketID() << endl;
+				cout << "\tPassenger Name: " << ticket.getPassenger().get_name() << endl;
+				cout << "\tPassport Number: " << ticket.getPassenger().get_passportNumber() << endl;
+				cout << "\tPassport Issue Country: " << ticket.getPassenger().get_passportIssueCountry() << endl;
+				cout << "\tFlight Number: " << ticket.getFlightNumber() << endl;
+				cout << "\tTicket Type: " << ticket.getTicketType() << endl;
+				cout << "\tSeat Number: " << ticket.getSeatNumber() << endl;
+				cout << "\tPrice: " << ticket.getPrice() << endl;
+			}
+			return;
+	}
+	cout << "Booking not found." << endl;
+}
+
+void displayParticularFlight(string flightNumber) {
+    flightNumber = toUpper(flightNumber);
+    for (Flight flight : flights) {
+        if (flight.getFlightNumber() == flightNumber) {
+            cout << "Flight Number: " << flight.getFlightNumber() << endl;
+            cout << "Airline: " << flight.getAirlineName() << endl;
+        }
+    }
+}
+
 
 // Booking Management
 vector<Booking> searchBookingsByStatus(const std::vector<Booking>& bookings, const std::string& status) {
