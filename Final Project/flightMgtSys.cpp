@@ -110,12 +110,12 @@ bool bookFlight(const string& userID, const string& flightNumber, const string& 
         const string& seatNumber = seatAndPassenger.first;
         const Passenger& passenger = seatAndPassenger.second;
 
-        if (!flight->bookSeat(seatNumber)) {
-            cout << "Seat " << seatNumber << " could not be booked." << endl;
-            continue;
-        }
+        //if (!flight->bookSeat(seatNumber)) {
+        //    cout << "Seat " << seatNumber << " could not be booked." << endl;
+        //    continue;
+        //}
 
-        string ticketID = flightNumber.substr(0, 3) + passenger.get_name().substr(0, 2) + passenger.get_passportNumber().substr(passenger.get_passportNumber().length() - 3);
+        string ticketID = toUpper(flightNumber.substr(0, 3) + passenger.get_name().substr(0, 2) + passenger.get_passportNumber().substr(passenger.get_passportNumber().length() - 3));
         double price = flight->getSeatPrice(seatNumber);
         string seatClass = flight->getSeatClass(seatNumber);
 

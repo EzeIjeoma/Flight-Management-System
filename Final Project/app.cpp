@@ -59,7 +59,7 @@ namespace app {
 		cout << "\tEnter Flight Number: ";
 		cin >> input;
 		if (checkAndExit()) return;
-		flightNumber = input;
+		flightNumber = toUpper(input);
 
 		cout << "\tEnter Airline Name: ";
 		cin.ignore();
@@ -171,7 +171,6 @@ namespace app {
 		clearScreen();
 		asciiHeader();
 		string csvData;
-		//cout << "\n\n\tFlight Manifest\n\n";
 		cout << "\tFlight Number: " << flightNumber << endl;
 		cout << "\tAirline: " << flight->getAirlineName() << endl;
 		cout << "\tDate: " << flight->getDateOfFlight() << endl;
@@ -436,7 +435,7 @@ namespace app {
 		cout << "\n\n\tEnter Flight Number to Book: ";
 		cin >> input;
 		if (checkAndExitToUserMenu()) return;
-		Flight* flight = findFlightByID(input);
+		Flight* flight = findFlightByID(toUpper(input));
 		if (!flight) {
 			cout << "\n\tFlight not found! Please Try Again.";
 			delay(2000);
@@ -494,7 +493,7 @@ namespace app {
 			cin >> input;
 			if (checkAndExitToUserMenu()) return;
 			int choice = stoi(input);
-			string ticketType = (choice == 1) ? "Business" : "Economy";
+			ticketType = (choice == 1) ? "Business" : "Economy";
 
 			cout << "\tAvailable Seats: \n";
 			vector<string> availableSeats = flight->getAvailableSeats(ticketType);
@@ -510,6 +509,7 @@ namespace app {
 				seatNumber[1] = toupper(seatNumber[1]);
 			}
 			seatToPassengerMap[seatNumber] = Passenger(passengerName, passportNumber, passportIssueCountry);
+			flight->bookSeat(seatNumber);
 		}
 
 		string confirm;
@@ -532,6 +532,10 @@ namespace app {
 		}
 		else {
 			cout << "\n\tBooking Cancelled!";
+			for (const auto& seatAndPassenger : seatToPassengerMap) {
+				string seatNumber = seatAndPassenger.first;
+				flight->cancelSeat(seatNumber);
+			}
 			delay(2000);
 			clearScreen();
 			userMenu();
