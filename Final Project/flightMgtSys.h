@@ -18,10 +18,13 @@ using namespace std;
 using namespace chrono;
 
 // Booking Management
-vector<Booking> searchBookingsByStatus(const std::vector<Booking>& bookings, const std::string& status);
-vector<Booking> searchBookingsByDate(const std::vector<Booking>& bookings, const std::string& date, bool searchBefore);
+vector<Booking> searchBookingsByStatus(const vector<Booking>& bookings, const string& status);
+vector<Booking> searchBookingsByDate(const vector<Booking>& bookings, const string& date, bool searchBefore);
+vector<Booking> searchBookingsByBookingID(const vector<Booking>& bookings, string& bookingID);
+vector<Booking> searchBookingsByBookingDate(const vector<Booking>& bookings, string& date);
 vector<Booking> searchBookingsByFlightDate(const vector<Booking>& bookings, const string& date, bool searchBefore);
-vector<Booking> searchBookingsByUser(const std::vector<Booking>& bookings, const std::string& userId);
+vector<Booking> searchBookingsByFlightNumber(const vector<Booking>& bookings, string& flightNumber);
+vector<Booking> searchBookingsByUser(const std::vector<Booking>& bookings, string& userId);
 void sortBookingsByCriteria(vector<Booking>& bookingList, const string& criterion, bool ascending);
 bool adminCancelBooking(const string bookingID);
 bool keepCancellationRequest(const string bookingID);

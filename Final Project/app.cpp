@@ -310,6 +310,193 @@ namespace app {
 
 	}
 
+	void adminViewBookings() {
+		string flightNumber, bookingDate, userID, input;
+
+		auto checkAndExit = [&]() -> bool {
+			if (input == "exit") {
+				clearScreen();
+				adminMenu();
+				return true;
+			}
+			return false;
+		};
+
+		asciiHeader();
+		cout << "\n\n\tView Booking Details\n\n";
+
+		cout << "\n\t1. View All Bookings\n";
+		cout << "\t2. Search Bookings by Booking Date\n";
+		cout << "\t3. Search Bookings by Booking ID\n";
+		cout << "\t4. Search Bookings by Flight Number\n";
+		cout << "\t5. Search Bookings by User ID\n";
+		cout << "\t6. Go Back to Admin Menu\n";
+		cout << "\tEnter Your Choice: ";
+		cin >> input;
+
+		vector<Booking> bookings = getBookings();
+		sortBookingsByCriteria(bookings, "bookingDate", false);
+		if (input == "1") {
+			// View All Bookings
+			clearScreen();
+			asciiHeader();
+			util::ConsoleTable table;
+			vector<string> headers = { "Booking ID", "Booking Date", "Flight Number", "User ID", "Number of Passengers", "Check-In Status", "Status"};
+			table.addHeaders(headers);
+
+			for (const auto& booking : bookings) {
+				string numOfPassengers = to_string(booking.getTickets().size());
+				string checkInStatus = booking.getCheckInStatus() ? "Checked-In" : "Not Checked-In";
+				table.addRow({ booking.getBookingID(), booking.getBookingDate(), booking.getFlightNumber(), booking.getUserID(), numOfPassengers, checkInStatus, booking.getStatus() });
+			}
+
+			cout << "\n\n\tAll Bookings Details\n\n";
+			table.printTable();
+
+			cout << "\n\n\tPress any key to go back to the Admin Menu...";
+			_getch();
+			clearScreen();
+			adminMenu();
+		}
+		else if (input == "2") {
+			string bookingDate;
+			cout << "\tEnter Booking Date (YYYY-MM-DD): ";
+			cin >> bookingDate;
+
+			vector<Booking> filteredBookings = searchBookingsByBookingDate(bookings, bookingDate);
+			if (filteredBookings.empty()) {
+				cout << "\n\tNo Bookings Found for the Date: " << bookingDate;
+				delay(2000);
+				clearScreen();
+				adminMenu();
+			}
+
+			clearScreen();
+			asciiHeader();
+			util::ConsoleTable table;
+			vector<string> headers = { "Booking ID", "Booking Date", "Flight Number", "User ID", "Number of Passengers", "Check-In Status", "Status" };
+			table.addHeaders(headers);
+			
+			for (const auto& booking : filteredBookings) {
+				string numOfPassengers = to_string(booking.getTickets().size());
+				string checkInStatus = booking.getCheckInStatus() ? "Checked-In" : "Not Checked-In";
+				table.addRow({ booking.getBookingID(), booking.getBookingDate(), booking.getFlightNumber(), booking.getUserID(), numOfPassengers, checkInStatus, booking.getStatus() });
+			}
+
+			cout << "\n\n\tBookings Details for " << bookingDate << "\n\n";
+			table.printTable();
+
+			cout << "\n\n\tPress any key to go back to the Admin Menu...";
+			_getch();
+			clearScreen();
+			adminMenu();
+
+		}
+		else if (input == "3") {
+			string bookingID;
+			cout << "\tEnter Booking ID: ";
+			cin >> bookingID;
+
+			vector<Booking> filteredBookings = searchBookingsByBookingID(bookings, bookingID);
+			if (filteredBookings.empty()) {
+				cout << "\n\tNo Bookings Found for the Booking ID: " << bookingID;
+				delay(2000);
+				clearScreen();
+				adminMenu();
+			}
+
+			clearScreen();
+			asciiHeader();
+			util::ConsoleTable table;
+			vector<string> headers = { "Booking ID", "Booking Date", "Flight Number", "User ID", "Number of Passengers", "Check-In Status", "Status" };
+			table.addHeaders(headers);
+
+			for (const auto& booking : filteredBookings) {
+				string numOfPassengers = to_string(booking.getTickets().size());
+				string checkInStatus = booking.getCheckInStatus() ? "Checked-In" : "Not Checked-In";
+				table.addRow({ booking.getBookingID(), booking.getBookingDate(), booking.getFlightNumber(), booking.getUserID(), numOfPassengers, checkInStatus, booking.getStatus() });
+			}
+
+			cout << "\n\n\tBookings Details for " << bookingID << "\n\n";
+			table.printTable();
+
+			cout << "\n\n\tPress any key to go back to the Admin Menu...";
+			_getch();
+			clearScreen();
+			adminMenu();
+		}
+		else if (input == "4") {
+			string flightNumber;
+			cout << "\tEnter Flight Number: ";
+			cin >> flightNumber;
+
+			vector<Booking> filteredBookings = searchBookingsByFlightNumber(bookings, flightNumber);
+			if (filteredBookings.empty()) {
+				cout << "\n\tNo Bookings Found for the Flight Number: " << flightNumber;
+				delay(2000);
+				clearScreen();
+				adminMenu();
+			}
+
+			clearScreen();
+			asciiHeader();
+			util::ConsoleTable table;
+			vector<string> headers = { "Booking ID", "Booking Date", "Flight Number", "User ID", "Number of Passengers", "Check-In Status", "Status" };
+			table.addHeaders(headers);
+
+			for (const auto& booking : filteredBookings) {
+				string numOfPassengers = to_string(booking.getTickets().size());
+				string checkInStatus = booking.getCheckInStatus() ? "Checked-In" : "Not Checked-In";
+				table.addRow({ booking.getBookingID(), booking.getBookingDate(), booking.getFlightNumber(), booking.getUserID(), numOfPassengers, checkInStatus, booking.getStatus() });
+			}
+
+			cout << "\n\n\tBookings Details for " << flightNumber << "\n\n";
+			table.printTable();
+
+			cout << "\n\n\tPress any key to go back to the Admin Menu...";
+			_getch();
+			clearScreen();
+			adminMenu();
+		}
+		else if (input == "5") {
+			string userID;
+			cout << "\tEnter User ID: ";
+			cin >> userID;
+
+			vector<Booking> filteredBookings = searchBookingsByUser(bookings, userID);
+			if (filteredBookings.empty()) {
+				cout << "\n\tNo Bookings Found for the User ID: " << userID;
+				delay(2000);
+				clearScreen();
+				adminMenu();
+			}
+
+			clearScreen();
+			asciiHeader();
+			util::ConsoleTable table;
+			vector<string> headers = { "Booking ID", "Booking Date", "Flight Number", "User ID", "Number of Passengers", "Check-In Status", "Status" };
+			table.addHeaders(headers);
+
+			for (const auto& booking : filteredBookings) {
+				string numOfPassengers = to_string(booking.getTickets().size());
+				string checkInStatus = booking.getCheckInStatus() ? "Checked-In" : "Not Checked-In";
+				table.addRow({ booking.getBookingID(), booking.getBookingDate(), booking.getFlightNumber(), booking.getUserID(), numOfPassengers, checkInStatus, booking.getStatus() });
+			}
+
+			cout << "\n\n\tBookings Details for " << userID << "\n\n";
+			table.printTable();
+
+			cout << "\n\n\tPress any key to go back to the Admin Menu...";
+			_getch();
+			clearScreen();
+			adminMenu();
+		}
+		else {
+			clearScreen();
+			adminMenu();
+		}
+	}
+
 	void adminMenu() {
 		 writeToCSV();
 		int menuChoice;
@@ -339,7 +526,7 @@ namespace app {
 			break;
 		case 4:
 			clearScreen();
-			//viewBookings(); 
+			adminViewBookings(); 
 			break;
 		case 5:
 			clearScreen();

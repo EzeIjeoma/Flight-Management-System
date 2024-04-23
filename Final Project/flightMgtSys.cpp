@@ -69,7 +69,37 @@ vector<Booking> searchBookingsByFlightDate(const vector<Booking>& bookings, cons
     return filteredBookings;
 }
 
-vector<Booking> searchBookingsByUser(const std::vector<Booking>& bookings, const std::string& userId) {
+vector<Booking> searchBookingsByBookingID(const vector<Booking>& bookings, string& bookingID) {
+ vector<Booking> matchedBookings;
+    for (const Booking& booking : bookings) {
+        if (toUpper(booking.getBookingID()) == toUpper(bookingID)) {
+			matchedBookings.push_back(booking);
+		}
+	}
+	return matchedBookings;
+}
+
+vector<Booking> searchBookingsByBookingDate(const std::vector<Booking>& bookings, std::string& date) {
+	std::vector<Booking> matchedBookings;
+    for (const Booking& booking : bookings) {
+        if (toUpper(booking.getBookingDate()) == toUpper(date)) {
+			matchedBookings.push_back(booking);
+		}
+	}
+	return matchedBookings;
+}
+
+vector<Booking> searchBookingsByFlightNumber(const std::vector<Booking>& bookings, std::string& flightNumber) {
+	std::vector<Booking> matchedBookings;
+    for (const Booking& booking : bookings) {
+        if (toUpper(booking.getFlightNumber()) == toUpper(flightNumber)) {
+			matchedBookings.push_back(booking);
+		}
+	}
+	return matchedBookings;
+}
+
+vector<Booking> searchBookingsByUser(const vector<Booking>& bookings, string& userId) {
     std::vector<Booking> matchedBookings;
     for (const Booking& booking : bookings) {
         if (booking.getUserID() == userId) {

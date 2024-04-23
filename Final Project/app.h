@@ -37,5 +37,6 @@ namespace app {
     void processCancellation();
     void readFromCSV();
     void writeToCSV();
+    void adminViewBookings();
 }
 
