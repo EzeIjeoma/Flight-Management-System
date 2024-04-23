@@ -1,9 +1,8 @@
 #include "app.h"
 #include "flightMgtSys.h"
 
-// using namespace std;
-
 namespace app {
+	// Admin Menu Functions
 	void viewFlights() {
 		string flightNumber;
 		vector<Flight> flights = getFlights();
@@ -542,7 +541,7 @@ namespace app {
 		}
 	}
 
-
+	// User Menu Functions
 	void bookFlight() {
 		string input;
 		string departureCity, destinationCity, flightDate;
@@ -728,7 +727,6 @@ namespace app {
 			userMenu();
 		}
 	}
-
 
 	void viewBookingsTripDetails() {
 		// Get current session user ID
@@ -1074,7 +1072,6 @@ namespace app {
 		userMenu();
 	}
 
-
 	void userMenu() {
 		writeToCSV();
 		string input;
@@ -1113,6 +1110,7 @@ namespace app {
 		}
 	}
 
+	// Home and Authentication
 	void logout() {
 		logoutUser();
 		clearScreen();
@@ -1240,7 +1238,6 @@ namespace app {
 		}
 	}
 
-
 	void welcome(string message) {
 		const vector<string> airplaneLines = {
 			" -.                 `|.",
@@ -1270,8 +1267,6 @@ namespace app {
 		delay(3500);
 		clearScreen();
 	}
-
-
 
 	// helper functions
 	void asciiHeader() {

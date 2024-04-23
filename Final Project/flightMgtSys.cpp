@@ -140,10 +140,7 @@ bool bookFlight(const string& userID, const string& flightNumber, const string& 
         const string& seatNumber = seatAndPassenger.first;
         const Passenger& passenger = seatAndPassenger.second;
 
-        //if (!flight->bookSeat(seatNumber)) {
-        //    cout << "Seat " << seatNumber << " could not be booked." << endl;
-        //    continue;
-        //}
+        flight->bookSeat(seatNumber);
 
         string ticketID = toUpper(flightNumber.substr(0, 3) + passenger.get_name().substr(0, 2) + passenger.get_passportNumber().substr(passenger.get_passportNumber().length() - 3));
         double price = flight->getSeatPrice(seatNumber);
@@ -636,6 +633,14 @@ void importBookingsFromCSV(const string& bookingsFilename, const string& tickets
 
         bool checkIn = (checkInStatus == "Checked In");
         vector<Ticket>& tickets = ticketMap[bookingID];
+
+        for (Ticket& ticket : tickets) {
+			Flight* flight = findFlightByID(ticket.getFlightNumber());
+            if (flight) {
+				flight->bookSeat(ticket.getSeatNumber());
+			}
+		}   
+
         Booking* newBooking = new Booking(bookingID, userID, flightNumber, tickets, bookingDate, status);
         newBooking->setCheckInStatus(checkIn);
         bookings.push_back(*newBooking);
